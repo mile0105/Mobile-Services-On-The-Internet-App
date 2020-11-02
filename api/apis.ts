@@ -1,11 +1,11 @@
 import {
-    ADD_PRODUCT_URL, getDecreaseQuantityUrl,
+    ADD_PRODUCT_URL,
     getEditOrDeleteProductUrl,
-    getIncreaseQuantityUrl,
+    getChangeQuantityUrl,
     LIST_PRODUCTS_URL,
-    REGISTER_URL
+    REGISTER_URL, PASSWORD_LOGIN_URL
 } from "../constants/APIConstants";
-import {Product, ProductApi, User} from "./models";
+import {JwtToken, Product, ProductApi, User} from "./models";
 import {gretch} from "gretchen";
 
 export const getAllProducts = async (): Promise<Product[]> => {
@@ -17,7 +17,7 @@ export const getAllProducts = async (): Promise<Product[]> => {
     }).json();
 
     if(error) {
-        //handle error
+        throw new Error(error)
     }
 
     return data? data : [];
@@ -42,19 +42,10 @@ export const editProduct = async (productApi: ProductApi, productId: bigint): Pr
     return data!!;
 };
 
-export const increaseQuantity = async (productId: bigint, quantity: bigint): Promise<void> => {
-    const url = getIncreaseQuantityUrl(productId);
+export const changeQuantity = async (productId: bigint, quantity: bigint): Promise<void> => {
+    const url = getChangeQuantityUrl(productId);
     const {data, error} = await gretch(url, {
-        method: 'PUT',
-        headers: contentType, //todo add token to headers
-        body: quantity.toString()
-    }).json();
-};
-
-export const decreaseQuantity = async (productId: bigint, quantity: bigint): Promise<void> => {
-    const url = getDecreaseQuantityUrl(productId);
-    const {data, error} = await gretch(url, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: contentType, //todo add token to headers
         body: quantity.toString()
     }).json();
@@ -71,12 +62,34 @@ export const deleteProduct = async (productId: bigint): Promise<void> => {
 
 export const register = async (user: User): Promise<void> => {
 
-    const{data, error} = await gretch(REGISTER_URL, {
+    const {data, error} = await gretch(REGISTER_URL, {
         method: 'POST',
         headers: contentType,
         body: JSON.stringify(user)
     }).json()
 };
 
+export const login = async (username: string, password: string): Promise<JwtToken> => {
+    const {data, error} = await gretch<JwtToken>(PASSWORD_LOGIN_URL, {
+        method: 'POST',
+        headers: loginHeaders,
+        body: new URLSearchParams({
+            username: username,
+            password: password,
+            'grant_type': 'password',
+        })
+    }).json();
+
+    if (error) {
+        throw new Error(error.error)
+    }
+
+    return data!!;
+};
+
 
 export const contentType = {'Content-Type': 'application/json'};
+export const loginHeaders = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Authorization': 'Basic Y2xpZW50OnNlY3JldA==',
+};

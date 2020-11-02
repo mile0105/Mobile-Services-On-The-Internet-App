@@ -7,12 +7,8 @@ export const LIST_PRODUCTS_URL = BASE_URL + API_VERSION_PREFIX + '/products';
 export const ADD_PRODUCT_URL = LIST_PRODUCTS_URL;
 
 
-export const getIncreaseQuantityUrl = (productId: bigint): string => {
-    return `${BASE_URL}${API_VERSION_PREFIX}/products/${productId}/increaseQuantity`;
-};
-
-export const getDecreaseQuantityUrl = (productId: bigint): string => {
-    return `${BASE_URL}${API_VERSION_PREFIX}/products/${productId}/decreaseQuantity`;
+export const getChangeQuantityUrl = (productId: bigint): string => {
+    return `${BASE_URL}${API_VERSION_PREFIX}/products/${productId}/quantity`;
 };
 
 export const getEditOrDeleteProductUrl = (productId: bigint): string => {
