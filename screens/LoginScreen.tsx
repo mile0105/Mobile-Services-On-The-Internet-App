@@ -5,19 +5,20 @@ import {useState} from "react";
 import {StackScreenProps} from "@react-navigation/stack";
 import {RootStackParamList} from "../types";
 import {login} from "../api/apis";
+import {storeJwt} from "../storage/store";
 
 export default function LoginScreen({ navigation }: StackScreenProps<RootStackParamList, 'Login'>) {
 
     const goToRegister = () => {
-        navigation.navigate('Register');
+        navigation.push('Register');
     };
 
     const loginWithPassword = () => {
         login(username, password).then(data => {
-            console.log('success');
-            console.log(data);
+            storeJwt(data);
+            navigation.push('Warehouse');
         }).catch(err => {
-            console.log(err.toString());
+            console.log(err);
         })
     };
 

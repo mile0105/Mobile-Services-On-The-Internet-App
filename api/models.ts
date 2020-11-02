@@ -23,3 +23,10 @@ export interface JwtToken {
     tokenType: string
     expiry: Date
 }
+
+export interface AccessToken {
+    access_token: string,
+    refresh_token: string,
+    token_type: string,
+    expires_in: number
+}

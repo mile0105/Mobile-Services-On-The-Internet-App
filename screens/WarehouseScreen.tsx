@@ -1,11 +1,16 @@
-import {default as React, useState} from "react";
+import {default as React, useEffect, useState} from "react";
 import {Text, View} from "../components/Themed";
 import {TextInput, TouchableOpacity} from "react-native";
+import {getAllProducts} from "../api/apis";
 
 // @ts-ignore
 export default function WarehouseScreen() {
 
-    //todo add api call to products
+    useEffect(() => {
+        getAllProducts().then(data => {
+            console.log(data);
+        })
+    });
 
     const [products, setProducts] = useState([]);
 
