@@ -5,43 +5,23 @@ import {Product} from "../api/models";
 import {ProductItem} from "../components/ProductItem";
 import {ScrollView} from "react-native";
 
-interface ProductRequest {
-    products: Product[],
-    loading: boolean,
-}
 
 export default function WarehouseScreen() {
 
-    const [productsRequest, setProductsRequest] = useState<ProductRequest>({
-        products: [],
-        loading: false,
-    });
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setIsLoading] = useState(false);
 
     useEffect(() => {
 
         const fetchData = async () => {
-            console.log('running...');
-            const currentProducts = productsRequest.products;
-
-            setProductsRequest({
-                products: currentProducts,
-                loading: true,
-            });
-
+            setIsLoading(true);
             try {
                 const productsResponse = await getAllProducts();
-                console.log(productsResponse);
-                setProductsRequest({
-                    products: productsResponse,
-                    loading: false,
-                });
-                console.log(productsRequest)
+                setProducts(productsResponse);
             } catch (err) {
                 console.log(err);
-                setProductsRequest({
-                    products: currentProducts,
-                    loading: false
-                })
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchData();
@@ -51,13 +31,13 @@ export default function WarehouseScreen() {
 
     return (
         <View>
-            {productsRequest.loading ? (
+            {loading ? (
                 <Text>
                     Loading
                 </Text>
             ) : (
                 <ScrollView>
-                    {productsRequest.products.map((product, index) =>
+                    {products.map((product, index) =>
                         <ProductItem key={index} product={product}/>
                     )}
                 </ScrollView>
