@@ -1,25 +1,67 @@
 import {default as React, useEffect, useState} from "react";
 import {Text, View} from "../components/Themed";
-import {TextInput, TouchableOpacity} from "react-native";
 import {getAllProducts} from "../api/apis";
+import {Product} from "../api/models";
+import {ProductItem} from "../components/ProductItem";
+import {ScrollView} from "react-native";
 
-// @ts-ignore
+interface ProductRequest {
+    products: Product[],
+    loading: boolean,
+}
+
 export default function WarehouseScreen() {
 
-    useEffect(() => {
-        getAllProducts().then(data => {
-            console.log(data);
-        })
+    const [productsRequest, setProductsRequest] = useState<ProductRequest>({
+        products: [],
+        loading: false,
     });
 
-    const [products, setProducts] = useState([]);
+    useEffect(() => {
 
-    return(
+        const fetchData = async () => {
+            console.log('running...');
+            const currentProducts = productsRequest.products;
+
+            setProductsRequest({
+                products: currentProducts,
+                loading: true,
+            });
+
+            try {
+                const productsResponse = await getAllProducts();
+                console.log(productsResponse);
+                setProductsRequest({
+                    products: productsResponse,
+                    loading: false,
+                });
+                console.log(productsRequest)
+            } catch (err) {
+                console.log(err);
+                setProductsRequest({
+                    products: currentProducts,
+                    loading: false
+                })
+            }
+        };
+        fetchData();
+
+    }, []);
+
+
+    return (
         <View>
-            <Text>
-                Under construction
-            </Text>
-
+            {productsRequest.loading ? (
+                <Text>
+                    Loading
+                </Text>
+            ) : (
+                <ScrollView>
+                    {productsRequest.products.map((product, index) =>
+                        <ProductItem key={index} product={product}/>
+                    )}
+                </ScrollView>
+            )}
         </View>
     )
 }
