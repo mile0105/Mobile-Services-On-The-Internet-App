@@ -1,9 +1,13 @@
 import {default as React, useState} from "react";
 import {Text, View} from "../components/Themed";
-import {StyleSheet, TextInput, TouchableOpacity} from "react-native";
+import {TextInput, TouchableOpacity} from "react-native";
 import {login, register} from "../api/apis";
+import {styles} from "../constants/styles";
+import {storeJwt} from "../storage/store";
+import {StackScreenProps} from "@react-navigation/stack";
+import {RootStackParamList} from "../types";
 
-export default function RegisterScreen() {
+export default function RegisterScreen({navigation}: StackScreenProps<RootStackParamList, 'Register'>) {
 
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
@@ -14,8 +18,8 @@ export default function RegisterScreen() {
         register({username: username, password: password})
             .then(() => {
                 login(username, password).then(jwt => {
-                    //todo add to local storage and to header
-                    console.log(jwt);
+                    storeJwt(jwt);
+                    navigation.push('Warehouse');
                 }).catch(err => {
                     console.log(err);
                 })
@@ -55,43 +59,3 @@ export default function RegisterScreen() {
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#003f5c',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    inputView:{
-        width:"80%",
-        backgroundColor:"#465881",
-        borderRadius:25,
-        height:50,
-        marginBottom:20,
-        justifyContent:"center",
-        padding:20
-    },
-    textStyle: {
-        fontSize: 20,
-        color: "white",
-        marginBottom: 10
-    },
-    inputText:{
-        height:50,
-        color:"white"
-    },
-    submitBtn:{
-        width:"80%",
-        backgroundColor:"#fb5b5a",
-        borderRadius:25,
-        height:50,
-        alignItems:"center",
-        justifyContent:"center",
-        marginTop:40,
-        marginBottom:10
-    },
-    submitText:{
-        color:"white"
-    }
-});

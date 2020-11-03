@@ -6,6 +6,7 @@ import {StackScreenProps} from "@react-navigation/stack";
 import {RootStackParamList} from "../types";
 import {login} from "../api/apis";
 import {storeJwt} from "../storage/store";
+import {styles} from "../constants/styles";
 
 export default function LoginScreen({ navigation }: StackScreenProps<RootStackParamList, 'Login'>) {
 
@@ -61,67 +62,3 @@ export default function LoginScreen({ navigation }: StackScreenProps<RootStackPa
         </View>
     )
 }
-
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#003f5c',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    inputView:{
-        width:"80%",
-        backgroundColor:"#465881",
-        borderRadius:25,
-        height:50,
-        marginBottom:20,
-        justifyContent:"center",
-        padding:20
-    },
-    textStyle: {
-        fontSize: 20,
-        color: "white",
-        marginBottom: 10
-    },
-    inputText:{
-        height:50,
-        color:"white"
-    },
-    loginBtn:{
-        width:"80%",
-        backgroundColor:"#fb5b5a",
-        borderRadius:25,
-        height:50,
-        alignItems:"center",
-        justifyContent:"center",
-        marginTop:40,
-        marginBottom:10
-    },
-    loginText:{
-        color:"white"
-    },
-    googleLoginBtn: {
-        width:"80%",
-        backgroundColor:"#fb5b5a",
-        borderRadius:25,
-        height:50,
-        alignItems:"center",
-        justifyContent:"center",
-        marginTop:10,
-        marginBottom:10
-    },
-    registerBtn: {
-        width:"80%",
-        backgroundColor:"#33FF51",
-        borderRadius:25,
-        height:50,
-        alignItems:"center",
-        justifyContent:"center",
-        marginTop:10,
-        marginBottom:10
-    },
-    registerText: {
-        color: "003f5c"
-    }
-});

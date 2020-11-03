@@ -1,7 +1,7 @@
 import {Product} from "../api/models";
-import {Text} from "react-native";
-import {View} from "./Themed";
 import React from "react";
+import {ListItem} from "react-native-elements";
+import {Button} from "react-native";
 
 export interface ProductItemProps {
     product: Product
@@ -11,14 +11,18 @@ export const ProductItem = (props: ProductItemProps) => {
 
     const {product} = props;
 
-    const productName = `${product.manufacturerName} - ${product.modelName} : ${product.price} $`;
-    console.log(productName);
+    const productName = `${product.manufacturerName} - ${product.modelName} : ${product.price} PLN`;
+    const quantity = `In storage: ${product.quantity} items`;
 
     return (
         <>
-            <View>
-                <Text>${productName}</Text>
-            </View>
-
+            <ListItem>
+                <ListItem.Content>
+                    <ListItem.Title>{productName}</ListItem.Title>
+                    <ListItem.Subtitle>{quantity}</ListItem.Subtitle>
+                    <Button title={'Delete'} onPress={() => {}}/>
+                </ListItem.Content>
+                <ListItem.Chevron/>
+            </ListItem>
         </>)
 };
