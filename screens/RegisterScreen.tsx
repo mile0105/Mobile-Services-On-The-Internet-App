@@ -18,8 +18,9 @@ export default function RegisterScreen({navigation}: StackScreenProps<RootStackP
         register({username: username, password: password})
             .then(() => {
                 login(username, password).then(jwt => {
-                    storeJwt(jwt);
-                    navigation.push('Warehouse');
+                    storeJwt(jwt).then(() => {
+                        navigation.push('Warehouse');
+                    });
                 }).catch(err => {
                     console.log(err);
                 })

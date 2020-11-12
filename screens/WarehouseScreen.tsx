@@ -3,15 +3,16 @@ import {Text, View} from "../components/Themed";
 import {getAllProducts} from "../api/apis";
 import {Product} from "../api/models";
 import {ProductItem} from "../components/ProductItem";
-import {Button, ScrollView} from "react-native";
-import {Overlay} from "react-native-elements";
+import {Button, Modal, ScrollView, StyleSheet, TouchableHighlight} from "react-native";
+import {AddProductView} from "../components/AddProductView";
+import {styles} from "../constants/styles";
 
 
 export default function WarehouseScreen() {
 
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setIsLoading] = useState(false);
-    const [overlayVisible, setOverlayVisible] = useState(false);
+    const [addProductModalVisible, setAddProductModalVisible] = useState(false);
 
     useEffect(() => {
 
@@ -30,28 +31,59 @@ export default function WarehouseScreen() {
 
     }, []);
 
-    console.log(overlayVisible);
+    const addProductToState = (product: Product) => {
+        const newProducts = [...products, product];
+        setProducts(newProducts);
+    };
+
+    const deleteProductFromState = (productId: bigint) => {
+        const newProducts = products.filter(product => product.id !== productId);
+        setProducts(newProducts);
+    };
+
+    const editProductInState = (updatedProduct: Product) => {
+        const newProducts = [...products.filter(product => product.id !== updatedProduct.id), updatedProduct];
+        setProducts(newProducts);
+    };
 
     return (
-        <View>
-            {loading ? (
-                <Text>
-                    Loading
-                </Text>
-            ) : (
-                <View>
-                    <ScrollView>
-                        {products.map((product, index) =>
-                            <ProductItem key={index} product={product}/>
-                        )}
-                    </ScrollView>
-                    <Overlay isVisible={false} fullScreen={true} accessibilityViewIsModal={true}>
-                        <Text>yo</Text>
-                    </Overlay>
-                    <Button title={'Add Product'} onPress={() => {setOverlayVisible(true)}}/>
+        <ScrollView style={styles.scrollView}>
 
-                </View>
-            )}
-        </View>
+            <View>
+                {loading ? (
+                    <Text>
+                        Loading
+                    </Text>
+                ) : (
+                    <View>
+                        <ScrollView>
+                            {products.map((product, index) =>
+                                <ProductItem key={index}
+                                             product={product}
+                                             deleteProductFromState={deleteProductFromState}
+                                             editProductInState={editProductInState}/>
+                            )}
+                        </ScrollView>
+
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={addProductModalVisible}
+                            onRequestClose={() => {
+                                setAddProductModalVisible(!addProductModalVisible)
+                            }}
+                        >
+                            <AddProductView addProductToState={addProductToState}
+                                            setModal={setAddProductModalVisible}/>
+                        </Modal>
+
+                        <Button title={'Add Product'} onPress={() => {
+                            setAddProductModalVisible(!addProductModalVisible)
+                        }}/>
+
+                    </View>
+                )}
+            </View>
+        </ScrollView>
     )
-}
+};
