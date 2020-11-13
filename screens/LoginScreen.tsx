@@ -1,6 +1,7 @@
 import {Text, View} from "../components/Themed";
 import * as React from "react";
-import {SafeAreaView, ScrollView, StyleSheet, TextInput, TouchableOpacity} from "react-native";
+import { SocialIcon } from 'react-native-elements'
+import {ScrollView, TextInput, TouchableOpacity} from "react-native";
 import {useState} from "react";
 import {StackScreenProps} from "@react-navigation/stack";
 import {RootStackParamList} from "../types";
@@ -58,9 +59,9 @@ export default function LoginScreen({navigation}: StackScreenProps<RootStackPara
                 <TouchableOpacity style={styles.loginBtn} onPress={loginWithPassword}>
                     <Text style={styles.loginText}>Login</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.googleLoginBtn}>
-                    <Text style={styles.loginText}>Login with google</Text>
-                </TouchableOpacity>
+                <SocialIcon type={'google'} button={true} style={styles.googleLoginBtn}
+                    title={'Login With Google'}
+                />
                 <TouchableOpacity style={styles.registerBtn} onPress={goToRegister}>
                     <Text style={styles.registerText}>Create account</Text>
                 </TouchableOpacity>

@@ -3,7 +3,7 @@ import {Text, View} from "../components/Themed";
 import {getAllProducts} from "../api/apis";
 import {Product} from "../api/models";
 import {ProductItem} from "../components/ProductItem";
-import {Button, Modal, ScrollView, StyleSheet, TouchableHighlight} from "react-native";
+import {Button, Modal, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity} from "react-native";
 import {AddProductView} from "../components/AddProductView";
 import {styles} from "../constants/styles";
 
@@ -48,7 +48,6 @@ export default function WarehouseScreen() {
 
     return (
         <ScrollView style={styles.scrollView}>
-
             <View>
                 {loading ? (
                     <Text>
@@ -77,9 +76,16 @@ export default function WarehouseScreen() {
                                             setModal={setAddProductModalVisible}/>
                         </Modal>
 
-                        <Button title={'Add Product'} onPress={() => {
-                            setAddProductModalVisible(!addProductModalVisible)
-                        }}/>
+
+                        <View style={styles.container}>
+                            <TouchableOpacity style={styles.submitBtn} onPress={() => {
+                                setAddProductModalVisible(!addProductModalVisible)
+                            }}>
+                                <Text style={styles.submitText}>
+                                    Add product
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
 
                     </View>
                 )}

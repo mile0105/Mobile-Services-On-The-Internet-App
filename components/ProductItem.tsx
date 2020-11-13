@@ -4,6 +4,7 @@ import {ListItem} from "react-native-elements";
 import {Button, Modal} from "react-native";
 import {deleteProduct} from "../api/apis"
 import {EditProductView} from "./EditProductView";
+import { UpdateQuantityView } from "./UpdateQuantityView";
 
 export interface ProductItemProps {
     product: Product,
@@ -16,6 +17,7 @@ export const ProductItem = (props: ProductItemProps) => {
     const {product, deleteProductFromState, editProductInState} = props;
 
     const [editProductModalVisible, setEditProductModalVisible] = useState(false);
+    const [updateQuantityModalVisible, setUpdateQuantityModalVisible] = useState(false);
 
     const productName = `${product.manufacturerName} - ${product.modelName} : ${product.price} PLN`;
     const quantity = `In storage: ${product.quantity} items`;
@@ -37,13 +39,18 @@ export const ProductItem = (props: ProductItemProps) => {
 
     return (
         <>
-            <ListItem>
+            <ListItem bottomDivider={true}>
                 <ListItem.Content>
-                    <ListItem.Title>{productName}</ListItem.Title>
-                    <ListItem.Subtitle>{quantity}</ListItem.Subtitle>
-                    <Button title={'Delete'} onPress={deleteCurrentProduct}/>
+                    <ListItem.Title style={{
+                        fontWeight: 'bold'
+                    }}>{productName}</ListItem.Title>
+                    <ListItem.Title>{quantity}</ListItem.Title>
+                    <Button color={'#465881'} title={'Update Quantity'} onPress={()=> {
+                        setUpdateQuantityModalVisible(true);
+                    }}/>
+                    <Button color={'#fb5b5a'} title={'Delete'} onPress={deleteCurrentProduct}/>
                 </ListItem.Content>
-                <ListItem.Chevron onPress={() => {setEditProductModalVisible(true)}}/>
+                <ListItem.Chevron color={'#000000'} onPress={() => {setEditProductModalVisible(true)}}/>
 
                 <Modal
                     animationType="slide"
@@ -56,6 +63,21 @@ export const ProductItem = (props: ProductItemProps) => {
                     <EditProductView editProductState={editProductInState}
                                      oldProduct={product}
                                      setModal={setEditProductModalVisible}/>
+                </Modal>
+
+
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={updateQuantityModalVisible}
+                    onRequestClose={() => {
+                        setUpdateQuantityModalVisible(!updateQuantityModalVisible)
+                    }}
+                >
+                    <UpdateQuantityView setModal={setUpdateQuantityModalVisible}
+                                        editProductInState={editProductInState}
+                                        product={product}
+                    />
                 </Modal>
 
             </ListItem>

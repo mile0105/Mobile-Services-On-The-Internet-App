@@ -70,10 +70,9 @@ export const changeQuantity = async (productId: bigint, quantity: bigint): Promi
         body: quantity.toString()
     }).json();
 
-    if(error) {
+    if (error) {
         throw error;
     }
-
 };
 
 
@@ -98,7 +97,7 @@ export const register = async (user: User): Promise<void> => {
         method: 'POST',
         headers: contentType,
         body: JSON.stringify(user)
-    }).json()
+    }).json();
 
     if(error) {
         throw error;
