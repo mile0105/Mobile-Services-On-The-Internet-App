@@ -3610,6 +3610,13 @@ expect@^25.5.0:
     jest-message-util "^25.5.0"
     jest-regex-util "^25.2.6"
 
+expo-app-auth@~9.2.0:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/expo-app-auth/-/expo-app-auth-9.2.0.tgz#88868639f96c4fae973b86bd8712477e2db9dc2c"
+  integrity sha512-aRsRTfCfpuR8n8nO22WwwwTB7JhhJv7T9ZB5f68u6NN/FTF5CnhI3m5t0lawmirNSdmK+mGL0L+gvRyVyt1WLQ==
+  dependencies:
+    invariant "^2.2.4"
+
 expo-asset@~8.2.0:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/expo-asset/-/expo-asset-8.2.0.tgz#2f72491064c02d4de32e9187d474deb9cec33003"
@@ -3650,6 +3657,13 @@ expo-font@~8.3.0:
   dependencies:
     fbjs "1.0.0"
     fontfaceobserver "^2.1.0"
+
+expo-google-app-auth@^8.1.3:
+  version "8.1.3"
+  resolved "https://registry.yarnpkg.com/expo-google-app-auth/-/expo-google-app-auth-8.1.3.tgz#ce576e0d080713459d97e6874c05f58f9008040e"
+  integrity sha512-qDq+yAJATwcBLek4FMEUPD5h3m3+tJN8VmDRW073eoNGM1fxJ6543vYpRssBCNU3CHSGyxZgz+lNoc9uL46Ttw==
+  dependencies:
+    expo-app-auth "~9.2.0"
 
 expo-keep-awake@~8.3.0:
   version "8.3.0"
@@ -6908,6 +6922,11 @@ react-native-gesture-handler@~1.7.0:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.4"
     prop-types "^15.7.2"
+
+react-native-google-signin@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-google-signin/-/react-native-google-signin-2.1.1.tgz#4281940eee88602b0181dd49affdf8c92980c85c"
+  integrity sha512-6l3fiLdX/bfhh0BoxGq+jGkagFsO+mrE/eRV4+3/0k8+FDxO90vdPpQdDiwlM5vWXRxWthTzMM09/jHw+4cvNw==
 
 react-native-iphone-x-helper@^1.2.1:
   version "1.3.0"

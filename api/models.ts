@@ -20,8 +20,6 @@ export interface Product {
 export interface JwtToken {
     accessToken: string
     refreshToken: string
-    tokenType: string
-    expiry: Date
 }
 
 export interface AccessToken {

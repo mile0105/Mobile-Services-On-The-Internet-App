@@ -29,7 +29,7 @@ export const ProductItem = (props: ProductItemProps) => {
                  deleteProductFromState(productId);
             }
         ).catch(err => {
-            if (err.error === 'access_denied') {
+            if (err.error === 'Forbidden') {
                 alert('You do not have permission to do that');
             } else {
                 console.log(err.error);

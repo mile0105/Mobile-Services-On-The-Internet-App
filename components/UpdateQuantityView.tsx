@@ -1,6 +1,6 @@
 import {Text, View} from "./Themed";
 import {styles} from "../constants/styles";
-import {Button, ScrollView, TextInput, TouchableOpacity} from "react-native";
+import {ScrollView, TextInput, TouchableOpacity} from "react-native";
 import * as React from "react";
 import {Product} from "../api/models";
 import {useState} from "react";
@@ -19,7 +19,6 @@ export const UpdateQuantityView = ({editProductInState, setModal, product}: Upda
     const submitQuantity = (quantity: number) => {
 
         const bigQuantity: bigint = BigInt(quantity).valueOf();
-        console.log(bigQuantity);
 
         changeQuantity(product.id, bigQuantity).then(data => {
             const newQuantity = product.quantity + quantity;

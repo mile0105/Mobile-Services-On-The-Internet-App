@@ -3,7 +3,7 @@ import {
     getEditOrDeleteProductUrl,
     getChangeQuantityUrl,
     LIST_PRODUCTS_URL,
-    REGISTER_URL, PASSWORD_LOGIN_URL
+    REGISTER_URL, PASSWORD_LOGIN_URL, GOOGLE_LOGIN_URL
 } from "../constants/APIConstants";
 import {AccessToken, JwtToken, Product, ProductApi, User} from "./models";
 import {gretch} from "gretchen";
@@ -106,47 +106,40 @@ export const register = async (user: User): Promise<void> => {
 
 export const login = async (username: string, password: string): Promise<JwtToken> => {
 
-    const params = new URLSearchParams({
+    const body = {
         username: username,
-        password: password,
-        'grant_type': 'password',
-    });
+        password: password
+    };
 
-    const {data, error} = await gretch<AccessToken>(PASSWORD_LOGIN_URL, {
+    const {data, error} = await gretch<JwtToken>(PASSWORD_LOGIN_URL, {
         method: 'POST',
-        headers: loginHeaders,
-        body: params.toString()
+        headers: contentType,
+        body: JSON.stringify(body)
     }).json();
-
 
     if (error) {
         throw error
     }
 
-    const jwtToken = mapToJwt(data!!);
-    return jwtToken;
+    return data!!;
 };
 
-const mapToJwt = (accessToken: AccessToken): JwtToken => {
+export const loginWithGoogle = async (googleToken: string): Promise<JwtToken> => {
 
-    const date = new Date();
-    const seconds = date.getSeconds() + accessToken.expires_in;
-    date.setSeconds(seconds);
-    return {
-        accessToken: accessToken.access_token,
-        refreshToken: accessToken.refresh_token,
-        tokenType: accessToken.token_type,
-        expiry: date
+    const {data, error} = await gretch<JwtToken>(GOOGLE_LOGIN_URL, {
+        method: 'POST',
+        headers: contentType,
+        body: googleToken,
+    }).json();
 
-    } as JwtToken;
+    if (error) {
+        throw error;
+    }
+
+    return data!!;
 };
-
 
 export const contentType = {'Content-Type': 'application/json'};
-export const loginHeaders = {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Authorization': 'Basic Y2xpZW50OnNlY3JldA==',
-};
 
 export const authorizationHeader = async (): Promise<any> => {
     const accessToken = await getAccessToken() as string;
