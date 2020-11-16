@@ -3,16 +3,20 @@ import {Text, View} from "../components/Themed";
 import {getAllProducts} from "../api/apis";
 import {Product} from "../api/models";
 import {ProductItem} from "../components/ProductItem";
-import {Button, Modal, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity} from "react-native";
+import {Modal, ScrollView, TouchableOpacity} from "react-native";
 import {AddProductView} from "../components/AddProductView";
 import {styles} from "../constants/styles";
-
+import {AuthContext} from "../context/context";
+import {removeAccessToken} from "../storage/store";
 
 export default function WarehouseScreen() {
 
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setIsLoading] = useState(false);
     const [addProductModalVisible, setAddProductModalVisible] = useState(false);
+
+    // @ts-ignore
+    const {signOut} = React.useContext(AuthContext);
 
     useEffect(() => {
 
@@ -83,6 +87,23 @@ export default function WarehouseScreen() {
                             }}>
                                 <Text style={styles.submitText}>
                                     Add product
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.container}>
+                            <TouchableOpacity style={styles.submitBtn} onPress={() => {
+                                removeAccessToken().then(() => {
+                                        signOut();
+                                    }
+                                ).catch(err => {
+                                        console.log(err);
+                                        alert('Could not sign out');
+                                    }
+                                );
+                            }}>
+                                <Text style={styles.submitText}>
+                                    Logout
                                 </Text>
                             </TouchableOpacity>
                         </View>

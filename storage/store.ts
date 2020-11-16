@@ -8,8 +8,8 @@ export const storeJwt = async (token: JwtToken): Promise<void> => {
     await AsyncStorage.setItem(ACCESS_TOKEN_KEY, JSON.stringify(token));
 };
 
-export const storeGoogleToken = async (token: String): Promise<void> => {
-
+export const removeAccessToken = async (): Promise<void> => {
+    await AsyncStorage.removeItem(ACCESS_TOKEN_KEY);
 };
 
 export const getAccessToken = async (): Promise<string | null> => {

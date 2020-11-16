@@ -4,38 +4,46 @@ import {TextInput, TouchableOpacity} from "react-native";
 import {login, register} from "../api/apis";
 import {styles} from "../constants/styles";
 import {storeJwt} from "../storage/store";
-import {StackScreenProps} from "@react-navigation/stack";
-import {RootStackParamList} from "../types";
+import {AuthContext} from "../context/context";
 
-export default function RegisterScreen({navigation}: StackScreenProps<RootStackParamList, 'Register'>) {
+export default function RegisterScreen() {
 
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
 
+    // @ts-ignore
+    const {signIn} = React.useContext(AuthContext);
 
     const registerUser = () => {
 
         register({username: username, password: password})
             .then(() => {
-                login(username, password).then(jwt => {
-                    storeJwt(jwt).then(() => {
-                        navigation.push('Warehouse');
-                    });
-                }).catch(err => {
-                    console.log(err);
-                })
+                    login(username, password).then(jwt => {
+                        storeJwt(jwt).then(() => {
+                            signIn(jwt.accessToken)
+                        });
+                    }).catch(err => {
+                        alert('Something went wrong');
+                        console.log(err);
+                    })
+                }
+            ).catch(err => {
+
+            if (err.message === 'User already exists') {
+                alert('User with that username already exists');
             }
-        ).catch(err => console.log(err));
+            console.log(err)
+        });
 
     };
 
 
-    return(
+    return (
         <View style={styles.container}>
             <Text style={styles.textStyle}>
                 Username
             </Text>
-            <View style={styles.inputView} >
+            <View style={styles.inputView}>
                 <TextInput
                     style={styles.inputText}
                     placeholder="Enter your username here..."
@@ -45,7 +53,7 @@ export default function RegisterScreen({navigation}: StackScreenProps<RootStackP
             <Text style={styles.textStyle}>
                 Password
             </Text>
-            <View style={styles.inputView} >
+            <View style={styles.inputView}>
                 <TextInput
                     secureTextEntry
                     style={styles.inputText}

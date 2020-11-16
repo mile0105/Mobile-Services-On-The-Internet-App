@@ -13,9 +13,12 @@ import {login, loginWithGoogle} from "../api/apis";
 import {storeJwt} from "../storage/store";
 import {styles} from "../constants/styles";
 import {SocialIcon} from "react-native-elements";
+import {AuthContext} from "../context/context";
 
 export default function LoginScreen({navigation}: StackScreenProps<RootStackParamList, 'Login'>) {
 
+    // @ts-ignore
+    const {signIn} = React.useContext(AuthContext);
 
     const androidClientId = '943009418326-obu9jtnmf8afkvknmk5mdkd5gsg1mneh.apps.googleusercontent.com';
 
@@ -26,7 +29,7 @@ export default function LoginScreen({navigation}: StackScreenProps<RootStackPara
     const loginWithPassword = () => {
         login(username, password).then(data => {
             storeJwt(data).then(() => {
-                navigation.push('Warehouse');
+                signIn(data.accessToken);
             });
         }).catch(error => {
             if (error.error_description === 'Bad credentials') {
@@ -48,7 +51,7 @@ export default function LoginScreen({navigation}: StackScreenProps<RootStackPara
 
                 loginWithGoogle(googleToken).then(data => {
                     storeJwt(data).then(() => {
-                        navigation.push('Warehouse');
+                        signIn(data.accessToken);
                     })
                 }).catch(error => {
                     console.log(error);
