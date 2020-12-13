@@ -7,19 +7,22 @@ export interface ProductApi {
     manufacturerName: string,
     modelName: string,
     price: number,
+    lastUpdate: Date | undefined
 }
 
 export interface Product {
-    id: bigint,
+    id: number,
     manufacturerName: string,
     modelName: string,
     price: number,
-    quantity: number
+    quantity: number,
+    lastUpdate: Date | undefined
 }
 
 export interface JwtToken {
     accessToken: string
     refreshToken: string
+    hasDeletePermission: boolean
 }
 
 export interface AccessToken {
@@ -27,4 +30,9 @@ export interface AccessToken {
     refresh_token: string,
     token_type: string,
     expires_in: number
+}
+
+export interface ProductDelta {
+    productId: number,
+    quantity: number
 }

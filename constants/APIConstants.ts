@@ -9,10 +9,10 @@ export const LIST_PRODUCTS_URL = BASE_URL + API_VERSION_PREFIX + '/products';
 export const ADD_PRODUCT_URL = LIST_PRODUCTS_URL;
 
 
-export const getChangeQuantityUrl = (productId: bigint): string => {
+export const getChangeQuantityUrl = (productId: number): string => {
     return `${BASE_URL}${API_VERSION_PREFIX}/products/${productId}/quantity`;
 };
 
-export const getEditOrDeleteProductUrl = (productId: bigint): string => {
+export const getEditOrDeleteProductUrl = (productId: number): string => {
     return `${BASE_URL}${API_VERSION_PREFIX}/products/${productId}`;
 };

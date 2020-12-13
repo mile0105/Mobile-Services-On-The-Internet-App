@@ -5,9 +5,15 @@ import {
     LIST_PRODUCTS_URL,
     REGISTER_URL, PASSWORD_LOGIN_URL, GOOGLE_LOGIN_URL
 } from "../constants/APIConstants";
-import {AccessToken, JwtToken, Product, ProductApi, User} from "./models";
+import {JwtToken, Product, ProductApi, ProductDelta, User} from "./models";
 import {gretch} from "gretchen";
-import {getAccessToken} from "../storage/store";
+import {addProductDelta, getAccessToken} from "../storage/store";
+import {isConnected} from "../network/utils";
+import {
+    storeAddProductToLocalStorage,
+    storeDeleteProductToLocalStorage,
+    storeEditProductToLocalStorage
+} from "./synchelper";
 
 export const getAllProducts = async (): Promise<Product[]> => {
 
@@ -26,6 +32,12 @@ export const getAllProducts = async (): Promise<Product[]> => {
 };
 
 export const addProduct = async (productApi: ProductApi): Promise<Product> => {
+
+    const hasInternetConnection = await isConnected();
+    if (!hasInternetConnection) {
+        return await storeAddProductToLocalStorage(productApi);
+    }
+
     const authorization = await authorizationHeader();
 
     const {data, error} = await gretch<Product>(ADD_PRODUCT_URL, {
@@ -41,8 +53,17 @@ export const addProduct = async (productApi: ProductApi): Promise<Product> => {
     return data!!
 };
 
-export const editProduct = async (productApi: ProductApi, productId: bigint): Promise<Product> => {
+export const editProduct = async (productApi: ProductApi, productId: number, quantity: number): Promise<Product> => {
 
+    const hasInternetConnection = await isConnected();
+
+    if (!hasInternetConnection) {
+        return await storeEditProductToLocalStorage(productId, productApi, quantity)
+    }
+    return await editProductOnServer(productApi, productId);
+};
+
+export const editProductOnServer = async (productApi: ProductApi, productId: number): Promise<Product> => {
     const authorization = await authorizationHeader();
 
     const url = getEditOrDeleteProductUrl(productId);
@@ -59,8 +80,24 @@ export const editProduct = async (productApi: ProductApi, productId: bigint): Pr
     return data!!;
 };
 
-export const changeQuantity = async (productId: bigint, quantity: bigint): Promise<void> => {
+export const changeQuantity = async (productId: number, newQuantity: number, oldQuantity: number): Promise<void> => {
 
+    const hasInternetConnection = await isConnected();
+    if (!hasInternetConnection) {
+        if (newQuantity + oldQuantity < 0) {
+            throw Error('Quantity must not be less than 0');
+        }
+        const productDelta = {
+            productId: productId,
+            quantity: newQuantity
+        } as ProductDelta;
+        await addProductDelta(productDelta);
+        return;
+    }
+    await changeQuantityOnServer(productId, newQuantity)
+};
+
+export const changeQuantityOnServer = async (productId: number, quantity: number): Promise<void> => {
     const authorization = await authorizationHeader();
 
     const url = getChangeQuantityUrl(productId);
@@ -75,8 +112,14 @@ export const changeQuantity = async (productId: bigint, quantity: bigint): Promi
     }
 };
 
+export const deleteProduct = async (productId: number): Promise<void> => {
 
-export const deleteProduct = async (productId: bigint): Promise<void> => {
+    const hasInternetConnection = await isConnected();
+
+    if (!hasInternetConnection) {
+        return await storeDeleteProductToLocalStorage(productId)
+    }
+
     const authorization = await authorizationHeader();
 
     const url = getEditOrDeleteProductUrl(productId);
@@ -99,7 +142,7 @@ export const register = async (user: User): Promise<void> => {
         body: JSON.stringify(user)
     }).json();
 
-    if(error) {
+    if (error) {
         throw error;
     }
 };

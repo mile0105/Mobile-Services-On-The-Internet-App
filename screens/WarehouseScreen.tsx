@@ -8,6 +8,8 @@ import {AddProductView} from "../components/AddProductView";
 import {styles} from "../constants/styles";
 import {AuthContext} from "../context/context";
 import {removeAccessToken} from "../storage/store";
+import {sync} from "../network/sync";
+import {isConnected} from "../network/utils";
 
 export default function WarehouseScreen() {
 
@@ -21,14 +23,19 @@ export default function WarehouseScreen() {
     useEffect(() => {
 
         const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                const productsResponse = await getAllProducts();
-                setProducts(productsResponse);
-            } catch (err) {
-                console.log(err);
-            } finally {
-                setIsLoading(false);
+            const connected = await isConnected();
+
+            if (connected) {
+                setIsLoading(true);
+                await sync();
+                try {
+                    const productsResponse = await getAllProducts();
+                    setProducts(productsResponse);
+                } catch (err) {
+                    console.log(err);
+                } finally {
+                    setIsLoading(false);
+                }
             }
         };
         fetchData();
@@ -40,7 +47,7 @@ export default function WarehouseScreen() {
         setProducts(newProducts);
     };
 
-    const deleteProductFromState = (productId: bigint) => {
+    const deleteProductFromState = (productId: number) => {
         const newProducts = products.filter(product => product.id !== productId);
         setProducts(newProducts);
     };

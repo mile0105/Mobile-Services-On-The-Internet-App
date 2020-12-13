@@ -1,6 +1,6 @@
 import {Text, View} from "./Themed";
 import {styles} from "../constants/styles";
-import {Button, ScrollView, TextInput, TouchableOpacity} from "react-native";
+import {ScrollView, TextInput, TouchableOpacity} from "react-native";
 import * as React from "react";
 import {Product, ProductApi} from "../api/models";
 import {useState} from "react";
@@ -23,10 +23,11 @@ export const EditProductView = ({editProductState, setModal, oldProduct}: EditPr
         const product = {
             modelName: modelName,
             manufacturerName: manufacturerName,
-            price: price
+            price: price,
+            lastUpdate: new Date()
         } as ProductApi;
 
-        editProduct(product, oldProduct.id).then(product => {
+        editProduct(product, oldProduct.id, oldProduct.quantity).then(product => {
             editProductState(product);
             setModal(false);
         }).catch(err => {

@@ -1,10 +1,10 @@
 import {Product} from "../api/models";
 import React, {useState} from "react";
 import {ListItem} from "react-native-elements";
-import {Button, Modal} from "react-native";
+import {Alert, Button, Modal} from "react-native";
 import {deleteProduct} from "../api/apis"
 import {EditProductView} from "./EditProductView";
-import { UpdateQuantityView } from "./UpdateQuantityView";
+import {UpdateQuantityView} from "./UpdateQuantityView";
 
 export interface ProductItemProps {
     product: Product,
@@ -19,14 +19,15 @@ export const ProductItem = (props: ProductItemProps) => {
     const [editProductModalVisible, setEditProductModalVisible] = useState(false);
     const [updateQuantityModalVisible, setUpdateQuantityModalVisible] = useState(false);
 
-    const productName = `${product.manufacturerName} - ${product.modelName} : ${product.price} PLN`;
+    const productName = `${product.manufacturerName} - ${product.modelName}`;
+    const productNameAndPrice = `${productName} : ${product.price} PLN`;
     const quantity = `In storage: ${product.quantity} items`;
 
     const deleteCurrentProduct = () => {
         const productId = product.id;
         deleteProduct(product.id).then(
             data => {
-                 deleteProductFromState(productId);
+                deleteProductFromState(productId);
             }
         ).catch(err => {
             if (err.error === 'Forbidden') {
@@ -43,14 +44,29 @@ export const ProductItem = (props: ProductItemProps) => {
                 <ListItem.Content>
                     <ListItem.Title style={{
                         fontWeight: 'bold'
-                    }}>{productName}</ListItem.Title>
+                    }}>{productNameAndPrice}</ListItem.Title>
                     <ListItem.Title>{quantity}</ListItem.Title>
-                    <Button color={'#465881'} title={'Update Quantity'} onPress={()=> {
+                    <Button color={'#465881'} title={'Update Quantity'} onPress={() => {
                         setUpdateQuantityModalVisible(true);
                     }}/>
-                    <Button color={'#fb5b5a'} title={'Delete'} onPress={deleteCurrentProduct}/>
+                    <Button color={'#fb5b5a'} title={'Delete'} onPress={
+                        () => {
+                            Alert.alert('Confirmation',
+                                `Are you sure that you want to delete ${productName}?`,
+                                [{
+                                    text: 'No',
+                                    style: 'cancel',
+                                }, {
+                                    text: 'Yes',
+                                    onPress:  () => {deleteCurrentProduct()}
+                                }
+                                ]);
+                        }
+                    }/>
                 </ListItem.Content>
-                <ListItem.Chevron color={'#000000'} onPress={() => {setEditProductModalVisible(true)}}/>
+                <ListItem.Chevron color={'#000000'} onPress={() => {
+                    setEditProductModalVisible(true)
+                }}/>
 
                 <Modal
                     animationType="slide"

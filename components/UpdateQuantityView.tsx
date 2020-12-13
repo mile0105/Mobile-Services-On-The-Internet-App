@@ -18,14 +18,11 @@ export const UpdateQuantityView = ({editProductInState, setModal, product}: Upda
 
     const submitQuantity = (quantity: number) => {
 
-        const bigQuantity: bigint = BigInt(quantity).valueOf();
-
-        changeQuantity(product.id, bigQuantity).then(data => {
+        changeQuantity(product.id, quantity, product.quantity).then(data => {
             const newQuantity = product.quantity + quantity;
             editProductInState({...product, quantity: newQuantity});
             setModal(false);
         }).catch(err => {
-
             if (err.message === 'Quantity must not be less than 0') {
                 alert('You are trying to remove more items than there are in the warehouse');
             } else {
