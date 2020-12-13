@@ -1,9 +1,9 @@
-import {default as React, useEffect, useState} from "react";
+import {default as React, useCallback, useEffect, useState} from "react";
 import {Text, View} from "../components/Themed";
 import {getAllProducts} from "../api/apis";
 import {Product} from "../api/models";
 import {ProductItem} from "../components/ProductItem";
-import {Modal, ScrollView, TouchableOpacity} from "react-native";
+import {Modal, RefreshControl, ScrollView, ToastAndroid, TouchableOpacity} from "react-native";
 import {AddProductView} from "../components/AddProductView";
 import {styles} from "../constants/styles";
 import {AuthContext} from "../context/context";
@@ -14,7 +14,8 @@ import {isConnected} from "../network/utils";
 export default function WarehouseScreen() {
 
     const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setIsLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const [addProductModalVisible, setAddProductModalVisible] = useState(false);
 
     // @ts-ignore
@@ -26,7 +27,7 @@ export default function WarehouseScreen() {
             const connected = await isConnected();
 
             if (connected) {
-                setIsLoading(true);
+                setLoading(true);
                 await sync();
                 try {
                     const productsResponse = await getAllProducts();
@@ -34,11 +35,32 @@ export default function WarehouseScreen() {
                 } catch (err) {
                     console.log(err);
                 } finally {
-                    setIsLoading(false);
+                    setLoading(false);
                 }
             }
         };
         fetchData();
+
+    }, []);
+
+    const refreshData = useCallback(async () => {
+
+        const connected = await isConnected();
+
+        if (connected) {
+            setRefreshing(true);
+            await sync();
+            try {
+                const productsResponse = await getAllProducts();
+                setProducts(productsResponse);
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setRefreshing(false);
+            }
+        } else {
+            ToastAndroid.show('No internet', ToastAndroid.SHORT)
+        }
 
     }, []);
 
@@ -58,7 +80,10 @@ export default function WarehouseScreen() {
     };
 
     return (
-        <ScrollView style={styles.scrollView}>
+        <ScrollView
+            style={styles.scrollView}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshData}/>}
+         >
             <View>
                 {loading ? (
                     <Text>
