@@ -34,5 +34,6 @@ export interface AccessToken {
 
 export interface ProductDelta {
     productId: number,
-    quantity: number
+    quantity: number,
+    productName: string
 }

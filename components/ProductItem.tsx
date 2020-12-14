@@ -25,8 +25,8 @@ export const ProductItem = (props: ProductItemProps) => {
 
     const deleteCurrentProduct = () => {
         const productId = product.id;
-        deleteProduct(product.id).then(
-            data => {
+        deleteProduct(product).then(
+            () => {
                 deleteProductFromState(productId);
             }
         ).catch(err => {

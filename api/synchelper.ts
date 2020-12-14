@@ -59,8 +59,9 @@ export const storeEditProductToLocalStorage = async (productId: number, productA
     return product;
 };
 
-export const storeDeleteProductToLocalStorage = async (productId: number): Promise<void> => {
+export const storeDeleteProductToLocalStorage = async (product: Product): Promise<void> => {
     const canDelete = await hasDeletePermissions();
+    const productId = product.id;
     if (canDelete) {
         if (productId < 0) {
             const productsInLocalStorage = await getCachedProductsToBeAdded();
@@ -77,7 +78,7 @@ export const storeDeleteProductToLocalStorage = async (productId: number): Promi
             if (index !== -1) {
                 await updateCachedProductsToBeEdited(productsToBeEditedInLocalStorage.splice(index, 1));
             }
-            await addToCachedProductsToBeDeleted(productId);
+            await addToCachedProductsToBeDeleted(product);
 
         }
 

@@ -9,10 +9,17 @@ import {
     updateProductDeltas
 } from "../storage/store";
 import {Product, ProductApi, ProductDelta} from "../api/models";
-import {addProduct, changeQuantityOnServer, deleteProduct, editProductOnServer} from "../api/apis";
+import {
+    addProductOnServer,
+    changeQuantityOnServer,
+    deleteProductOnTheServer,
+    editProductOnServer
+} from "../api/apis";
+import {ToastAndroid} from "react-native";
 
 export const sync = async () => {
 
+    let errorMessage = '';
     const productsToBeAdded = await getCachedProductsToBeAdded();
     const productsToBeEdited = await getCachedProductsToBeEdited();
     const productIdsToBeDeleted = await getCachedProductsToBeDeleted();
@@ -20,7 +27,7 @@ export const sync = async () => {
 
     const failedProductsToBeAdded: Product[] = [];
     const failedProductsToBeEdited: Product[] = [];
-    const failedProductIdsToBeDeleted: number[] = [];
+    const failedProductsToBeDeleted: Product[] = [];
     const failedProductDeltas: ProductDelta[] = [];
 
     for (let product of productsToBeAdded) {
@@ -32,13 +39,14 @@ export const sync = async () => {
                 manufacturerName: product.manufacturerName,
             } as ProductApi;
 
-            const savedProduct = await addProduct(productApi);
+            const savedProduct = await addProductOnServer(productApi);
             const index = productDeltas.findIndex(delta => delta.productId === productId);
             if (index !== -1) {
                 productDeltas[index] = {...productDeltas[index], productId: savedProduct.id};
             }
 
         } catch (e) {
+            errorMessage += `\nFailed to add product: ${product.manufacturerName} ${product.modelName}`;
             failedProductsToBeAdded.push(product);
             console.log(e);
         }
@@ -54,16 +62,18 @@ export const sync = async () => {
             } as ProductApi;
             await editProductOnServer(productApi, product.id);
         } catch (e) {
+            errorMessage += `\nFailed to edit product: ${product.manufacturerName} ${product.modelName}`;
             failedProductsToBeEdited.push(product);
             console.log(e);
         }
     }
 
-    for (let productId of productIdsToBeDeleted) {
+    for (let product of productIdsToBeDeleted) {
         try {
-            await deleteProduct(productId)
+            await deleteProductOnTheServer(product.id)
         } catch (e) {
-            failedProductIdsToBeDeleted.push(productId);
+            errorMessage += `\nFailed to add product: ${product.manufacturerName} ${product.modelName}`;
+            failedProductsToBeDeleted.push(product);
             console.log(e);
         }
     }
@@ -73,6 +83,7 @@ export const sync = async () => {
             const {productId, quantity} = delta;
             await changeQuantityOnServer(productId, quantity);
         } catch (e) {
+            errorMessage += `\nFailed to synchronize product quantity for product: ${delta.productName}`;
             failedProductDeltas.push(delta);
             console.log(e);
         }
@@ -80,8 +91,13 @@ export const sync = async () => {
 
     await updateCachedProductsToBeAdded(failedProductsToBeAdded);
     await updateCachedProductsToBeEdited(failedProductsToBeEdited);
-    await updateCachedProductsToBeDeleted(failedProductIdsToBeDeleted);
+    await updateCachedProductsToBeDeleted(failedProductsToBeDeleted);
     await updateProductDeltas(failedProductDeltas);
+
+    if (errorMessage !=='') {
+       ToastAndroid.show(`Errors in synchronization: ${errorMessage}`, ToastAndroid.LONG);
+    }
+
 };
 
 

@@ -72,21 +72,21 @@ export const updateCachedProductsToBeEdited = async (products: Product[]): Promi
     await AsyncStorage.setItem(CACHED_PRODUCTS_TO_BE_EDITED, JSON.stringify(products));
 };
 
-export const addToCachedProductsToBeDeleted = async (productId: number): Promise<void> => {
+export const addToCachedProductsToBeDeleted = async (productId: Product): Promise<void> => {
     const productIds = await getCachedProductsToBeDeleted();
     productIds.push(productId);
     await updateCachedProductsToBeDeleted(productIds);
 };
 
-export const getCachedProductsToBeDeleted = async (): Promise<number[]> => {
+export const getCachedProductsToBeDeleted = async (): Promise<Product[]> => {
     const productsString = await AsyncStorage.getItem(CACHED_PRODUCTS_TO_BE_DELETED);
     if (productsString == null) {
         return [];
     }
-    return JSON.parse(productsString) as number[];
+    return JSON.parse(productsString) as Product[];
 };
 
-export const updateCachedProductsToBeDeleted = async (productIds: number[]): Promise<void> => {
+export const updateCachedProductsToBeDeleted = async (productIds: Product[]): Promise<void> => {
     await AsyncStorage.setItem(CACHED_PRODUCTS_TO_BE_DELETED, JSON.stringify(productIds));
 };
 
@@ -97,7 +97,7 @@ export const addProductDelta = async (productDelta: ProductDelta): Promise<void>
     if (existingDelta) {
         const quantity = existingDelta.quantity + productDelta.quantity;
         const index = productDeltas.indexOf(existingDelta);
-        productDeltas[index] = {productId: productDelta.productId, quantity: quantity};
+        productDeltas[index] = {...productDelta, quantity: quantity };
     } else {
         productDeltas.push(productDelta);
     }

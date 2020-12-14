@@ -38,6 +38,10 @@ export const addProduct = async (productApi: ProductApi): Promise<Product> => {
         return await storeAddProductToLocalStorage(productApi);
     }
 
+    return await addProductOnServer(productApi);
+};
+
+export const addProductOnServer = async (productApi: ProductApi): Promise<Product> => {
     const authorization = await authorizationHeader();
 
     const {data, error} = await gretch<Product>(ADD_PRODUCT_URL, {
@@ -80,8 +84,9 @@ export const editProductOnServer = async (productApi: ProductApi, productId: num
     return data!!;
 };
 
-export const changeQuantity = async (productId: number, newQuantity: number, oldQuantity: number): Promise<void> => {
+export const changeQuantity = async (product: Product, newQuantity: number, oldQuantity: number): Promise<void> => {
 
+    const productId = product.id;
     const hasInternetConnection = await isConnected();
     if (!hasInternetConnection) {
         if (newQuantity + oldQuantity < 0) {
@@ -89,7 +94,8 @@ export const changeQuantity = async (productId: number, newQuantity: number, old
         }
         const productDelta = {
             productId: productId,
-            quantity: newQuantity
+            quantity: newQuantity,
+            productName: `${product.manufacturerName} ${product.modelName}`
         } as ProductDelta;
         await addProductDelta(productDelta);
         return;
@@ -112,14 +118,7 @@ export const changeQuantityOnServer = async (productId: number, quantity: number
     }
 };
 
-export const deleteProduct = async (productId: number): Promise<void> => {
-
-    const hasInternetConnection = await isConnected();
-
-    if (!hasInternetConnection) {
-        return await storeDeleteProductToLocalStorage(productId)
-    }
-
+export const deleteProductOnTheServer = async (productId: number): Promise<void> => {
     const authorization = await authorizationHeader();
 
     const url = getEditOrDeleteProductUrl(productId);
@@ -131,7 +130,16 @@ export const deleteProduct = async (productId: number): Promise<void> => {
     if (error) {
         throw error;
     }
+};
 
+export const deleteProduct = async (product: Product): Promise<void> => {
+
+    const hasInternetConnection = await isConnected();
+
+    if (!hasInternetConnection) {
+        return await storeDeleteProductToLocalStorage(product)
+    }
+    return await deleteProductOnTheServer(product.id);
 };
 
 export const register = async (user: User): Promise<void> => {

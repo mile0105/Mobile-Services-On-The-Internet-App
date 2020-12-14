@@ -18,7 +18,7 @@ export const UpdateQuantityView = ({editProductInState, setModal, product}: Upda
 
     const submitQuantity = (quantity: number) => {
 
-        changeQuantity(product.id, quantity, product.quantity).then(data => {
+        changeQuantity(product, quantity, product.quantity).then(() => {
             const newQuantity = product.quantity + quantity;
             editProductInState({...product, quantity: newQuantity});
             setModal(false);
