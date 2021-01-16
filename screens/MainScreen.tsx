@@ -9,13 +9,11 @@ import {removeAccessToken} from "../storage/store";
 import {sync} from "../network/sync";
 import {isConnected} from "../network/utils";
 import {fetchAllWarehouses} from "../api/v2/apis";
-import {Warehouse} from "../api/v2/models";
 import DropDownPicker from 'react-native-dropdown-picker';
 import {ProductItem} from "../components/ProductItem";
 import store from "../storage/reduxStore";
 import {useDispatch} from "react-redux";
 import {setWarehouses, setSelectedWarehouseId} from "../reducer/warehouseReducer";
-import {isLoading} from "expo-font";
 
 
 export interface WarehouseLabel {
@@ -94,14 +92,6 @@ export default function MainScreen() {
 
   }, [dispatch]);
 
-  const addProductToState = (product: Product) => {
-    triggerRefresh();
-  };
-
-  const deleteProductFromState = (productId: number) => {
-    triggerRefresh();
-  };
-
   const triggerRefresh = () => {
     setLoading(true);
 
@@ -111,6 +101,14 @@ export default function MainScreen() {
       setLoading(false);
     });
 
+  };
+
+  const addProductToState = (product: Product) => {
+    triggerRefresh();
+  };
+
+  const deleteProductFromState = (productId: number) => {
+    triggerRefresh();
   };
 
   const editProductInState = (updatedProduct: Product) => {
