@@ -8,80 +8,80 @@ import {changeQuantity, changeQuantityOnServer} from "../api/apis";
 import store from "../storage/reduxStore";
 
 export interface UpdateQuantityViewProps {
-    product: Product,
-    updateQuantityInState: any;
-    setModal: any;
+  product: Product,
+  updateQuantityInState: any;
+  setModal: any;
 }
 
 export const UpdateQuantityView = ({updateQuantityInState, setModal, product}: UpdateQuantityViewProps) => {
 
-    const [quantityState, setQuantityState] = useState<number>(0);
-    const warehouseId = store.getState().selectedWarehouseId;
+  const [quantityState, setQuantityState] = useState<number>(0);
+  const warehouseId = store.getState().selectedWarehouseId;
 
-    const submitQuantity = (quantity: number) => {
+  const submitQuantity = (quantity: number) => {
 
-        changeQuantity(product, quantity, product.quantity, warehouseId!!).then(() => {
-            const newQuantity = product.quantity + quantity;
-            updateQuantityInState(product.id, warehouseId, newQuantity);
-            setModal(false);
-        }).catch(err => {
-            if (err.message === 'Quantity must not be less than 0') {
-                alert('You are trying to remove more items than there are in the warehouse');
-            } else {
-                alert('Something went wrong');
-            }
-            console.log(err);
-        });
-    };
+    changeQuantity(product, quantity, product.quantity, warehouseId!!).then(() => {
+      const newQuantity = product.quantity + quantity;
+      updateQuantityInState(product.id, warehouseId, newQuantity);
+      setModal(false);
+    }).catch(err => {
+      if (err.message === 'Quantity must not be less than 0') {
+        alert('You are trying to remove more items than there are in the warehouse');
+      } else {
+        alert('Something went wrong');
+      }
+      console.log(err);
+    });
+  };
 
-    return (
-        <>
-            <ScrollView style={styles.scrollView}>
-                <View style={styles.container}>
+  return (
+    <>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.container}>
 
-                    <Text style={styles.textStyle}>
-                        {`Product: ${product.manufacturerName} - ${product.modelName}`}
-                    </Text>
-                    <Text style={styles.textStyle}>
-                        {`Items in warehouse: ${product.quantity}`}
-                    </Text>
-                    <Text style={styles.textStyle}>
-                        Set the amount
-                    </Text>
-                    <View style={styles.inputView}>
-                        <TextInput
-                            style={styles.inputText}
-                            value={quantityState.toString()}
-                            placeholder="Enter the Price"
-                            keyboardType={"numeric"}
-                            placeholderTextColor="#FFFFFF"
-                            onChangeText={text => {
-                                const numericValue = Number(text);
-                                setQuantityState(numericValue);
-                            }}
-                        />
-                    </View>
-
-
-                    <TouchableOpacity style={styles.submitBtn} onPress={() => {
-                        submitQuantity(quantityState);
-                    }}>
-                        <Text style={styles.submitText}>
-                            Add items
-                        </Text>
-                    </TouchableOpacity>
+          <Text style={styles.textStyle}>
+            {`Product: ${product.manufacturerName} - ${product.modelName}`}
+          </Text>
+          <Text style={styles.textStyle}>
+            {`Items in warehouse: ${product.quantity}`}
+          </Text>
+          <Text style={styles.textStyle}>
+            Set the amount
+          </Text>
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.inputText}
+              value={quantityState.toString()}
+              placeholder="Enter the Price"
+              keyboardType={"numeric"}
+              placeholderTextColor="#FFFFFF"
+              onChangeText={text => {
+                const numericValue = Number(text);
+                setQuantityState(numericValue);
+              }}
+            />
+          </View>
 
 
-                    <TouchableOpacity style={styles.submitBtn} onPress={() => {
-                        submitQuantity(-quantityState);
-                    }}>
-                        <Text style={styles.submitText}>
-                            Remove items
-                        </Text>
-                    </TouchableOpacity>
+          <TouchableOpacity style={styles.submitBtn} onPress={() => {
+            submitQuantity(quantityState);
+          }}>
+            <Text style={styles.submitText}>
+              Add items
+            </Text>
+          </TouchableOpacity>
 
-                </View>
-            </ScrollView>
-        </>
-    )
+
+          <TouchableOpacity style={styles.submitBtn} onPress={() => {
+            submitQuantity(-quantityState);
+          }}>
+            <Text style={styles.submitText}>
+              Remove items
+            </Text>
+          </TouchableOpacity>
+
+        </View>
+      </ScrollView>
+    </>
+  )
 };

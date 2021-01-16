@@ -7,97 +7,99 @@ import {EditProductView} from "./EditProductView";
 import {UpdateQuantityView} from "./UpdateQuantityView";
 
 export interface ProductItemProps {
-    product: Product,
-    deleteProductFromState: any,
-    editProductInState: any,
-    updateQuantityInState: any,
+  product: Product,
+  deleteProductFromState: any,
+  editProductInState: any,
+  updateQuantityInState: any,
 }
 
 export const ProductItem = (props: ProductItemProps) => {
 
-    const {product, deleteProductFromState, editProductInState, updateQuantityInState} = props;
+  const {product, deleteProductFromState, editProductInState, updateQuantityInState} = props;
 
-    const [editProductModalVisible, setEditProductModalVisible] = useState(false);
-    const [updateQuantityModalVisible, setUpdateQuantityModalVisible] = useState(false);
+  const [editProductModalVisible, setEditProductModalVisible] = useState(false);
+  const [updateQuantityModalVisible, setUpdateQuantityModalVisible] = useState(false);
 
-    const productName = `${product.manufacturerName} - ${product.modelName}`;
-    const productNameAndPrice = `${productName} : ${product.price} PLN`;
-    const quantity = `In storage: ${product.quantity} items`;
+  const productName = `${product.manufacturerName} - ${product.modelName}`;
+  const productNameAndPrice = `${productName} : ${product.price} PLN`;
+  const quantity = `In storage: ${product.quantity} items`;
 
-    const deleteCurrentProduct = () => {
-        const productId = product.id;
-        deleteProduct(product).then(
+  const deleteCurrentProduct = () => {
+    const productId = product.id;
+    deleteProduct(product).then(
+      () => {
+        deleteProductFromState(productId);
+      }
+    ).catch(err => {
+      if (err.error === 'Forbidden') {
+        alert('You do not have permission to do that');
+      } else {
+        console.log(err.error);
+      }
+    })
+  };
+
+  return (
+    <>
+      <ListItem bottomDivider={true}>
+        <ListItem.Content>
+          <ListItem.Title style={{
+            fontWeight: 'bold'
+          }}>{productNameAndPrice}</ListItem.Title>
+          <ListItem.Title>{quantity}</ListItem.Title>
+          <Button color={'#465881'} title={'Update Quantity'} onPress={() => {
+            setUpdateQuantityModalVisible(true);
+          }}/>
+          <Button color={'#fb5b5a'} title={'Delete'} onPress={
             () => {
-                deleteProductFromState(productId);
+              Alert.alert('Confirmation',
+                `Are you sure that you want to delete ${productName}?`,
+                [{
+                  text: 'No',
+                  style: 'cancel',
+                }, {
+                  text: 'Yes',
+                  onPress: () => {
+                    deleteCurrentProduct()
+                  }
+                }
+                ]);
             }
-        ).catch(err => {
-            if (err.error === 'Forbidden') {
-                alert('You do not have permission to do that');
-            } else {
-                console.log(err.error);
-            }
-        })
-    };
+          }/>
+        </ListItem.Content>
+        <ListItem.Chevron color={'#000000'} onPress={() => {
+          setEditProductModalVisible(true)
+        }}/>
 
-    return (
-        <>
-            <ListItem bottomDivider={true}>
-                <ListItem.Content>
-                    <ListItem.Title style={{
-                        fontWeight: 'bold'
-                    }}>{productNameAndPrice}</ListItem.Title>
-                    <ListItem.Title>{quantity}</ListItem.Title>
-                    <Button color={'#465881'} title={'Update Quantity'} onPress={() => {
-                        setUpdateQuantityModalVisible(true);
-                    }}/>
-                    <Button color={'#fb5b5a'} title={'Delete'} onPress={
-                        () => {
-                            Alert.alert('Confirmation',
-                                `Are you sure that you want to delete ${productName}?`,
-                                [{
-                                    text: 'No',
-                                    style: 'cancel',
-                                }, {
-                                    text: 'Yes',
-                                    onPress:  () => {deleteCurrentProduct()}
-                                }
-                                ]);
-                        }
-                    }/>
-                </ListItem.Content>
-                <ListItem.Chevron color={'#000000'} onPress={() => {
-                    setEditProductModalVisible(true)
-                }}/>
-
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={editProductModalVisible}
-                    onRequestClose={() => {
-                        setEditProductModalVisible(!editProductModalVisible)
-                    }}
-                >
-                    <EditProductView editProductState={editProductInState}
-                                     oldProduct={product}
-                                     setModal={setEditProductModalVisible}/>
-                </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={editProductModalVisible}
+          onRequestClose={() => {
+            setEditProductModalVisible(!editProductModalVisible)
+          }}
+        >
+          <EditProductView editProductState={editProductInState}
+                           oldProduct={product}
+                           setModal={setEditProductModalVisible}/>
+        </Modal>
 
 
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={updateQuantityModalVisible}
-                    onRequestClose={() => {
-                        setUpdateQuantityModalVisible(!updateQuantityModalVisible)
-                    }}
-                >
-                    <UpdateQuantityView setModal={setUpdateQuantityModalVisible}
-                                        updateQuantityInState={updateQuantityInState}
-                                        product={product}
-                    />
-                </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={updateQuantityModalVisible}
+          onRequestClose={() => {
+            setUpdateQuantityModalVisible(!updateQuantityModalVisible)
+          }}
+        >
+          <UpdateQuantityView setModal={setUpdateQuantityModalVisible}
+                              updateQuantityInState={updateQuantityInState}
+                              product={product}
+          />
+        </Modal>
 
-            </ListItem>
-        </>
-    )
+      </ListItem>
+    </>
+  )
 };

@@ -17,99 +17,99 @@ import {AuthContext} from "../context/context";
 
 export default function LoginScreen({navigation}: StackScreenProps<RootStackParamList, 'Login'>) {
 
-    // @ts-ignore
-    const {signIn} = React.useContext(AuthContext);
+  // @ts-ignore
+  const {signIn} = React.useContext(AuthContext);
 
-    const androidClientId = '943009418326-obu9jtnmf8afkvknmk5mdkd5gsg1mneh.apps.googleusercontent.com';
+  const androidClientId = '943009418326-obu9jtnmf8afkvknmk5mdkd5gsg1mneh.apps.googleusercontent.com';
 
-    const goToRegister = () => {
-        navigation.push('Register');
-    };
+  const goToRegister = () => {
+    navigation.push('Register');
+  };
 
-    const loginWithPassword = () => {
-        login(username, password).then(data => {
-            storeJwt(data).then(() => {
-                signIn(data.accessToken);
-            });
+  const loginWithPassword = () => {
+    login(username, password).then(data => {
+      storeJwt(data).then(() => {
+        signIn(data.accessToken);
+      });
+    }).catch(error => {
+      if (error.error_description === 'Bad credentials') {
+        alert('Invalid username/password');
+      }
+      console.log(error);
+    })
+  };
+
+  const signInWithGoogle = () => {
+
+    Google.logInAsync({
+      androidClientId: androidClientId,
+      //iosClientId: YOUR_CLIENT_ID_HERE,  <-- if you use iOS
+      scopes: ["profile", "email"]
+    }).then(result => {
+      if (result.type === 'success') {
+        const googleToken = result.idToken!!;
+
+        loginWithGoogle(googleToken).then(data => {
+          storeJwt(data).then(() => {
+            signIn(data.accessToken);
+          })
         }).catch(error => {
-            if (error.error_description === 'Bad credentials') {
-                alert('Invalid username/password');
-            }
-            console.log(error);
+          console.log(error);
+          alert('Could not log in with google');
         })
-    };
 
-    const signInWithGoogle = () => {
+      } else {
+        alert('Could not sign in to Google');
+      }
+    }).catch(err => {
+      console.log(err);
+      alert('Could not log in with google')
+    });
 
-        Google.logInAsync({
-            androidClientId: androidClientId,
-            //iosClientId: YOUR_CLIENT_ID_HERE,  <-- if you use iOS
-            scopes: ["profile", "email"]
-        }).then(result => {
-            if (result.type === 'success') {
-                const googleToken = result.idToken!!;
+  };
 
-                loginWithGoogle(googleToken).then(data => {
-                    storeJwt(data).then(() => {
-                        signIn(data.accessToken);
-                    })
-                }).catch(error => {
-                    console.log(error);
-                    alert('Could not log in with google');
-                })
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
 
-            } else {
-                alert('Could not sign in to Google');
-            }
-        }).catch(err => {
-            console.log(err);
-            alert('Could not log in with google')
-        });
+  return (
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.textStyle}>
+          Username
+        </Text>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.inputText}
+            placeholder="Enter your username here..."
+            placeholderTextColor="#FFFFFF"
+            onChangeText={text => setUsername(text)}/>
+        </View>
+        <Text style={styles.textStyle}>
+          Password
+        </Text>
+        <View style={styles.inputView}>
+          <TextInput
+            secureTextEntry
+            style={styles.inputText}
+            placeholder="Enter your password here..."
+            placeholderTextColor="#FFFFFF"
+            onChangeText={text => setPassword(text)}/>
+        </View>
 
-    };
-
-    const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
-
-    return (
-        <ScrollView>
-            <View style={styles.container}>
-                <Text style={styles.textStyle}>
-                    Username
-                </Text>
-                <View style={styles.inputView}>
-                    <TextInput
-                        style={styles.inputText}
-                        placeholder="Enter your username here..."
-                        placeholderTextColor="#FFFFFF"
-                        onChangeText={text => setUsername(text)}/>
-                </View>
-                <Text style={styles.textStyle}>
-                    Password
-                </Text>
-                <View style={styles.inputView}>
-                    <TextInput
-                        secureTextEntry
-                        style={styles.inputText}
-                        placeholder="Enter your password here..."
-                        placeholderTextColor="#FFFFFF"
-                        onChangeText={text => setPassword(text)}/>
-                </View>
-
-                <TouchableOpacity style={styles.loginBtn} onPress={loginWithPassword}>
-                    <Text style={styles.loginText}>Login</Text>
-                </TouchableOpacity>
+        <TouchableOpacity style={styles.loginBtn} onPress={loginWithPassword}>
+          <Text style={styles.loginText}>Login</Text>
+        </TouchableOpacity>
 
 
-                <SocialIcon type={'google'} button={true} style={styles.googleLoginBtn}
-                            title={'Login with Google'} onPress={signInWithGoogle}
-                />
+        <SocialIcon type={'google'} button={true} style={styles.googleLoginBtn}
+                    title={'Login with Google'} onPress={signInWithGoogle}
+        />
 
-                <TouchableOpacity style={styles.registerBtn} onPress={goToRegister}>
-                    <Text style={styles.registerText}>Create account</Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
+        <TouchableOpacity style={styles.registerBtn} onPress={goToRegister}>
+          <Text style={styles.registerText}>Create account</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
 
-    )
+  )
 }
