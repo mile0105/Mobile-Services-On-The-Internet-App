@@ -8,9 +8,9 @@ import {RootStackParamList} from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
-import WarehouseScreen from "../screens/WarehouseScreen";
 import {useState} from "react";
 import {AuthContext} from '../context/context';
+import MainScreen from "../screens/MainScreen";
 
 // If you are not familiar with React Navigation, we recommend going through the
 // "Fundamentals" guide: https://reactnavigation.org/docs/getting-started
@@ -58,7 +58,7 @@ function RootNavigator({token}: RootNavigatorProps) {
                 </>
             ) : (
                 <>
-                    <Stack.Screen name="Warehouse" component={WarehouseScreen}/>
+                    <Stack.Screen name="Warehouse" component={MainScreen}/>
                 </>
             )}
             <Stack.Screen name="NotFound" component={NotFoundScreen} options={{title: 'Oops!'}}/>

@@ -3,7 +3,7 @@ import {
     getEditOrDeleteProductUrl,
     getChangeQuantityUrl,
     LIST_PRODUCTS_URL,
-    REGISTER_URL, PASSWORD_LOGIN_URL, GOOGLE_LOGIN_URL
+    REGISTER_URL, PASSWORD_LOGIN_URL, GOOGLE_LOGIN_URL, getChangeQuantityUrlV2
 } from "../constants/APIConstants";
 import {JwtToken, Product, ProductApi, ProductDelta, User} from "./models";
 import {gretch} from "gretchen";
@@ -84,8 +84,10 @@ export const editProductOnServer = async (productApi: ProductApi, productId: num
     return data!!;
 };
 
-export const changeQuantity = async (product: Product, newQuantity: number, oldQuantity: number): Promise<void> => {
+export const changeQuantity = async (product: Product, newQuantity: number, oldQuantity: number, warehouseId?: number)
+: Promise<void> => {
 
+    const mappedWarehouseId = warehouseId !== undefined? warehouseId: 1;
     const productId = product.id;
     const hasInternetConnection = await isConnected();
     if (!hasInternetConnection) {
@@ -95,18 +97,25 @@ export const changeQuantity = async (product: Product, newQuantity: number, oldQ
         const productDelta = {
             productId: productId,
             quantity: newQuantity,
-            productName: `${product.manufacturerName} ${product.modelName}`
+            productName: `${product.manufacturerName} ${product.modelName}`,
+            warehouseId: mappedWarehouseId
         } as ProductDelta;
         await addProductDelta(productDelta);
         return;
     }
-    await changeQuantityOnServer(productId, newQuantity)
+    await changeQuantityOnServer(productId, newQuantity, mappedWarehouseId);
 };
 
-export const changeQuantityOnServer = async (productId: number, quantity: number): Promise<void> => {
+export const changeQuantityOnServer = async (productId: number, quantity: number, warehouseId: number)
+  : Promise<void> => {
+
     const authorization = await authorizationHeader();
 
-    const url = getChangeQuantityUrl(productId);
+    console.log(warehouseId);
+    const url = getChangeQuantityUrlV2(productId, warehouseId);
+
+    console.log(url);
+
     const {data, error} = await gretch(url, {
         method: 'PATCH',
         headers: Object.assign({...contentType, ...authorization}),

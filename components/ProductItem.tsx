@@ -10,11 +10,12 @@ export interface ProductItemProps {
     product: Product,
     deleteProductFromState: any,
     editProductInState: any,
+    updateQuantityInState: any,
 }
 
 export const ProductItem = (props: ProductItemProps) => {
 
-    const {product, deleteProductFromState, editProductInState} = props;
+    const {product, deleteProductFromState, editProductInState, updateQuantityInState} = props;
 
     const [editProductModalVisible, setEditProductModalVisible] = useState(false);
     const [updateQuantityModalVisible, setUpdateQuantityModalVisible] = useState(false);
@@ -91,7 +92,7 @@ export const ProductItem = (props: ProductItemProps) => {
                     }}
                 >
                     <UpdateQuantityView setModal={setUpdateQuantityModalVisible}
-                                        editProductInState={editProductInState}
+                                        updateQuantityInState={updateQuantityInState}
                                         product={product}
                     />
                 </Modal>

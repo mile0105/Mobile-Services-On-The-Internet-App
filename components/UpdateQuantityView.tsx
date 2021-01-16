@@ -4,23 +4,25 @@ import {ScrollView, TextInput, TouchableOpacity} from "react-native";
 import * as React from "react";
 import {Product} from "../api/models";
 import {useState} from "react";
-import {changeQuantity} from "../api/apis";
+import {changeQuantity, changeQuantityOnServer} from "../api/apis";
+import store from "../storage/reduxStore";
 
 export interface UpdateQuantityViewProps {
     product: Product,
-    editProductInState: any;
+    updateQuantityInState: any;
     setModal: any;
 }
 
-export const UpdateQuantityView = ({editProductInState, setModal, product}: UpdateQuantityViewProps) => {
+export const UpdateQuantityView = ({updateQuantityInState, setModal, product}: UpdateQuantityViewProps) => {
 
     const [quantityState, setQuantityState] = useState<number>(0);
+    const warehouseId = store.getState().selectedWarehouseId;
 
     const submitQuantity = (quantity: number) => {
 
-        changeQuantity(product, quantity, product.quantity).then(() => {
+        changeQuantity(product, quantity, product.quantity, warehouseId!!).then(() => {
             const newQuantity = product.quantity + quantity;
-            editProductInState({...product, quantity: newQuantity});
+            updateQuantityInState(product.id, warehouseId, newQuantity);
             setModal(false);
         }).catch(err => {
             if (err.message === 'Quantity must not be less than 0') {
@@ -38,7 +40,6 @@ export const UpdateQuantityView = ({editProductInState, setModal, product}: Upda
                 <View style={styles.container}>
 
                     <Text style={styles.textStyle}>
-
                         {`Product: ${product.manufacturerName} - ${product.modelName}`}
                     </Text>
                     <Text style={styles.textStyle}>
