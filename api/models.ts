@@ -32,6 +32,12 @@ export interface AccessToken {
     expires_in: number
 }
 
+export interface OldProductDelta {
+    productId: number,
+    quantity: number,
+    productName: string,
+}
+
 export interface ProductDelta {
     productId: number,
     quantity: number,

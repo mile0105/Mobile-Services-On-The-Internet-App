@@ -1,14 +1,14 @@
 import {
-  getCachedProductsToBeAdded,
-  getCachedProductsToBeDeleted,
-  getCachedProductsToBeEdited,
-  getProductDeltas,
-  updateCachedProductsToBeAdded,
-  updateCachedProductsToBeDeleted,
-  updateCachedProductsToBeEdited,
-  updateProductDeltas
+    getCachedProductsToBeAdded,
+    getCachedProductsToBeDeleted,
+    getCachedProductsToBeEdited, getOldProductDeltas,
+    getProductDeltas,
+    updateCachedProductsToBeAdded,
+    updateCachedProductsToBeDeleted,
+    updateCachedProductsToBeEdited, updateOldProductDeltas,
+    updateProductDeltas
 } from "../storage/store";
-import {Product, ProductApi, ProductDelta} from "../api/models";
+import {OldProductDelta, Product, ProductApi, ProductDelta} from "../api/models";
 import {
   addProductOnServer,
   changeQuantityOnServer,
@@ -24,11 +24,13 @@ export const sync = async () => {
   const productsToBeEdited = await getCachedProductsToBeEdited();
   const productIdsToBeDeleted = await getCachedProductsToBeDeleted();
   const productDeltas = await getProductDeltas();
+  const oldProductDeltas = await getOldProductDeltas();
 
   const failedProductsToBeAdded: Product[] = [];
   const failedProductsToBeEdited: Product[] = [];
   const failedProductsToBeDeleted: Product[] = [];
   const failedProductDeltas: ProductDelta[] = [];
+  const failedOldProductDeltas: OldProductDelta[] = [];
 
   for (let product of productsToBeAdded) {
     try {
@@ -89,10 +91,23 @@ export const sync = async () => {
     }
   }
 
+  for (let oldDelta of oldProductDeltas) {
+    try {
+      const {productId, quantity} = oldDelta;
+      //for old deltas we update the first warehouse
+      await changeQuantityOnServer(productId, quantity, 1);
+    } catch (e) {
+      errorMessage += `\nFailed to synchronize product quantity for product: ${oldDelta.productName}`;
+      failedOldProductDeltas.push(oldDelta);
+      console.log(e);
+    }
+  }
+
   await updateCachedProductsToBeAdded(failedProductsToBeAdded);
   await updateCachedProductsToBeEdited(failedProductsToBeEdited);
   await updateCachedProductsToBeDeleted(failedProductsToBeDeleted);
   await updateProductDeltas(failedProductDeltas);
+  await updateOldProductDeltas(failedOldProductDeltas);
 
   if (errorMessage !== '') {
     ToastAndroid.show(`Errors in synchronization: ${errorMessage}`, ToastAndroid.LONG);

@@ -1,4 +1,4 @@
-import {JwtToken, Product, ProductDelta} from "../api/models";
+import {JwtToken, OldProductDelta, Product, ProductDelta} from "../api/models";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -6,7 +6,8 @@ const ACCESS_TOKEN_KEY = "access_token";
 const CACHED_PRODUCTS_TO_BE_ADDED = "cached_products_to_be_added";
 const CACHED_PRODUCTS_TO_BE_EDITED = "cached_products_to_be_edited";
 const CACHED_PRODUCTS_TO_BE_DELETED = "cached_products_to_be_deleted";
-const CACHED_PRODUCTS_AND_DELTAS = "cached_products_and_deltas";
+const CACHED_PRODUCTS_AND_DELTAS = "new_deltas";
+const OLD_DELTAS = "cached_products_and_deltas";
 
 export const storeJwt = async (token: JwtToken): Promise<void> => {
   await AsyncStorage.setItem(ACCESS_TOKEN_KEY, JSON.stringify(token));
@@ -115,4 +116,16 @@ export const getProductDeltas = async (): Promise<ProductDelta[]> => {
 
 export const updateProductDeltas = async (deltas: ProductDelta[]): Promise<void> => {
   await AsyncStorage.setItem(CACHED_PRODUCTS_AND_DELTAS, JSON.stringify(deltas));
+};
+
+export const getOldProductDeltas = async (): Promise<OldProductDelta[]> => {
+  const deltasString = await AsyncStorage.getItem(OLD_DELTAS);
+  if (deltasString == null) {
+    return [];
+  }
+  return JSON.parse(deltasString) as ProductDelta[];
+};
+
+export const updateOldProductDeltas = async (deltas: OldProductDelta[]) => {
+  await AsyncStorage.setItem(OLD_DELTAS, JSON.stringify(deltas))
 };
