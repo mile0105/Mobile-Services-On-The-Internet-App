@@ -21,7 +21,7 @@ export const ProductItem = (props: ProductItemProps) => {
 
     const productName = `${product.manufacturerName} - ${product.modelName}`;
     const productNameAndPrice = `${productName} : ${product.price} PLN`;
-    const quantity = `In storage: ${product.quantity} items`;
+    const quantity = `${product.quantity} items`;
 
     const deleteCurrentProduct = () => {
         const productId = product.id;
@@ -46,10 +46,13 @@ export const ProductItem = (props: ProductItemProps) => {
                         fontWeight: 'bold'
                     }}>{productNameAndPrice}</ListItem.Title>
                     <ListItem.Title>{quantity}</ListItem.Title>
-                    <Button color={'#465881'} title={'Update Quantity'} onPress={() => {
+                    <Button color={'#aaaaaa'} title={'Change Quantity'} onPress={() => {
                         setUpdateQuantityModalVisible(true);
                     }}/>
-                    <Button color={'#fb5b5a'} title={'Delete'} onPress={
+                    <Button color={'#aaaaaa'} title={'Edit Product details'} onPress={() => {
+                        setEditProductModalVisible(true);
+                    }}/>
+                    <Button color={'#777777'} title={'Delete Product'} onPress={
                         () => {
                             Alert.alert('Confirmation',
                                 `Are you sure that you want to delete ${productName}?`,
@@ -64,9 +67,6 @@ export const ProductItem = (props: ProductItemProps) => {
                         }
                     }/>
                 </ListItem.Content>
-                <ListItem.Chevron color={'#000000'} onPress={() => {
-                    setEditProductModalVisible(true)
-                }}/>
 
                 <Modal
                     animationType="slide"

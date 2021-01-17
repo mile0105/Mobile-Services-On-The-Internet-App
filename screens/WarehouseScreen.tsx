@@ -124,6 +124,16 @@ export default function WarehouseScreen() {
                         </View>
 
                         <View style={styles.container}>
+                            <TouchableOpacity style={styles.submitBtn} onPress={async () => {
+                                await sync();
+                            }}>
+                                <Text style={styles.submitText}>
+                                    Synchronize
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.container}>
                             <TouchableOpacity style={styles.submitBtn} onPress={() => {
                                 removeAccessToken().then(() => {
                                         signOut();

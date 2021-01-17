@@ -4,17 +4,17 @@ export const styles = StyleSheet.create({
 
     scrollView: {
         flex: 1,
-        backgroundColor: '#003f5c',
+        backgroundColor: '#ffffff',
     },
     container: {
-        backgroundColor: '#003f5c',
+        backgroundColor: '#ffffff',
         alignItems: 'center',
         justifyContent: 'center',
     },
     inputView:{
         width:"80%",
-        backgroundColor:"#465881",
-        borderRadius:25,
+        backgroundColor:"#bbbbbb",
+        // borderRadius:25,
         height:50,
         marginBottom:20,
         justifyContent:"center",
@@ -27,11 +27,11 @@ export const styles = StyleSheet.create({
     },
     inputText:{
         height:50,
-        color:"white"
+        color:"black"
     },
     loginBtn:{
         width:"80%",
-        backgroundColor:"#fb5b5a",
+        backgroundColor:"#aaaaaa",
         borderRadius:25,
         height:50,
         alignItems:"center",
@@ -53,7 +53,7 @@ export const styles = StyleSheet.create({
     },
     registerBtn: {
         width:"80%",
-        backgroundColor:"#33FF51",
+        backgroundColor:"#aaaaaa",
         borderRadius:25,
         height:50,
         alignItems:"center",
@@ -62,12 +62,12 @@ export const styles = StyleSheet.create({
         marginBottom:10
     },
     registerText: {
-        color: "#003f5c"
+        color: "#000000"
     },
     submitBtn:{
         width:"80%",
-        backgroundColor:"#fb5b5a",
-        borderRadius:25,
+        backgroundColor:"#aaaaaa",
+        // borderRadius:25,
         height:50,
         alignItems:"center",
         justifyContent:"center",
