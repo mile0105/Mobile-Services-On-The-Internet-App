@@ -16,7 +16,11 @@ export const getChangeQuantityUrl = (productId: number): string => {
     return `${BASE_URL}${API_VERSION_PREFIX}/products/${productId}/quantity`;
 };
 
-export const getEditOrDeleteProductUrl = (productId: number): string => {
+export const getEditUrl = (productId: number): string => {
+    return `${BASE_URL}${API_VERSION_PREFIX_V2}/products/${productId}`;
+};
+
+export const getDeleteUrl = (productId: number): string => {
     return `${BASE_URL}${API_VERSION_PREFIX}/products/${productId}`;
 };
 

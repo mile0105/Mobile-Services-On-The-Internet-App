@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
     },
     textStyle: {
         fontSize: 20,
-        color: "white",
+        color: "black",
         marginBottom: 10
     },
     inputText:{

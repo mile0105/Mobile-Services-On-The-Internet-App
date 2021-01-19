@@ -1,9 +1,9 @@
 import {
     ADD_PRODUCT_URL,
-    getEditOrDeleteProductUrl,
+    getEditUrl,
     getChangeQuantityUrl,
     LIST_PRODUCTS_URL,
-    REGISTER_URL, PASSWORD_LOGIN_URL, GOOGLE_LOGIN_URL, LIST_PRODUCTS_URL_V2
+    REGISTER_URL, PASSWORD_LOGIN_URL, GOOGLE_LOGIN_URL, LIST_PRODUCTS_URL_V2, getDeleteUrl
 } from "../constants/APIConstants";
 import {JwtToken, Product, ProductApi, ProductDelta, User} from "./models";
 import {gretch} from "gretchen";
@@ -70,7 +70,7 @@ export const editProduct = async (productApi: ProductApi, productId: number, qua
 export const editProductOnServer = async (productApi: ProductApi, productId: number): Promise<Product> => {
     const authorization = await authorizationHeader();
 
-    const url = getEditOrDeleteProductUrl(productId);
+    const url = getEditUrl(productId);
     const {data, error} = await gretch<Product>(url, {
         method: 'PUT',
         headers: Object.assign({...contentType, ...authorization}),
@@ -121,7 +121,7 @@ export const changeQuantityOnServer = async (productId: number, quantity: number
 export const deleteProductOnTheServer = async (productId: number): Promise<void> => {
     const authorization = await authorizationHeader();
 
-    const url = getEditOrDeleteProductUrl(productId);
+    const url = getDeleteUrl(productId);
     const {data, error} = await gretch(url, {
         method: 'DELETE',
         headers: Object.assign({...contentType, ...authorization}),

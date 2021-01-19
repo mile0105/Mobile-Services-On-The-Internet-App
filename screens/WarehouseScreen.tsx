@@ -19,7 +19,7 @@ export default function WarehouseScreen() {
 
 
     const [products, setProducts] = useState<Product[]>([]);
-    const [language, setLanguage] = useState<typeof ENGLISH | typeof FRENCH>(FRENCH);
+    const [language, setLanguage] = useState<typeof ENGLISH | typeof FRENCH>(ENGLISH);
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [addProductModalVisible, setAddProductModalVisible] = useState(false);
@@ -37,7 +37,6 @@ export default function WarehouseScreen() {
                 await sync();
                 try {
                     const productsResponse = await getAllProducts();
-                    console.log(productsResponse)
                     setProducts(productsResponse);
                 } catch (err) {
                     console.log(err);
@@ -116,7 +115,8 @@ export default function WarehouseScreen() {
                                 setAddProductModalVisible(!addProductModalVisible)
                             }}
                         >
-                            <AddProductView addProductToState={addProductToState}
+                            <AddProductView language={language}
+                                            addProductToState={addProductToState}
                                             setModal={setAddProductModalVisible}/>
                         </Modal>
 
@@ -161,7 +161,7 @@ export default function WarehouseScreen() {
 
                         <View style={styles.container}>
                             <TouchableOpacity style={styles.submitBtn} onPress={() => {
-                                if(language === 'ENGLISH') {
+                                if (language === 'ENGLISH') {
                                     setLanguage('FRENCH')
                                 } else {
                                     setLanguage('ENGLISH')

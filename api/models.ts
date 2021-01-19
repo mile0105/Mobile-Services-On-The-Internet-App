@@ -7,6 +7,7 @@ export interface ProductApi {
     manufacturerName: string,
     modelName: string,
     price: number,
+    priceInEur: number,
     lastUpdate: Date | undefined
 }
 

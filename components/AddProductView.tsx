@@ -7,87 +7,98 @@ import {useState} from "react";
 import {addProduct} from "../api/apis";
 
 export interface AddProductViewProps {
-    addProductToState: any;
-    setModal: any;
+  addProductToState: any;
+  setModal: any;
+  language: 'ENGLISH' | 'FRENCH'
 }
 
-export const AddProductView = ({addProductToState, setModal}: AddProductViewProps) => {
+export const AddProductView = ({addProductToState, setModal, language}: AddProductViewProps) => {
 
-    const [modelName, setModelName] = useState('');
-    const [manufacturerName, setManufacturerName] = useState('');
-    const [price, setPrice] = useState(0);
+  const [modelName, setModelName] = useState('');
+  const [manufacturerName, setManufacturerName] = useState('');
+  const [price, setPrice] = useState(0);
 
 
-    const submitProduct = () => {
+  const priceLabel = language === 'ENGLISH' ? 'Price in USD' : 'Price in EUR';
 
-        const product = {
-            modelName: modelName,
-            manufacturerName: manufacturerName,
-            price: price
-        } as ProductApi;
+  const submitProduct = () => {
 
-        addProduct(product).then(product => {
-            addProductToState(product);
-            setModal(false);
-        }).catch(err => {
-            alert('Something went wrong');
-            console.log(err);
-        });
-    };
+    let product;
+    if (language === 'ENGLISH') {
+      product = {
+        modelName: modelName,
+        manufacturerName: manufacturerName,
+        price: price
+      } as ProductApi;
+    } else {
+      product = {
+        modelName: modelName,
+        manufacturerName: manufacturerName,
+        priceInEur: price
+      } as ProductApi;
+    }
+    addProduct(product).then(product => {
+      addProductToState(product);
+      setModal(false);
+    }).catch(err => {
+      alert('Something went wrong');
+      console.log(err);
+    });
+  };
 
-    return (
-        <>
-            <ScrollView style={styles.scrollView}>
-                <View style={styles.container}>
+  return (
+    <>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.container}>
 
-                    <Text style={styles.textStyle}>
-                        Manufacturer name
-                    </Text>
-                    <View style={styles.inputView}>
-                        <TextInput
-                            style={styles.inputText}
-                            placeholder="Enter the manufacturer name"
-                            placeholderTextColor="#FFFFFF"
-                            onChangeText={text => setManufacturerName(text)}
-                        />
-                    </View>
-                    <Text style={styles.textStyle}>
-                        Model name
-                    </Text>
-                    <View style={styles.inputView}>
-                        <TextInput
-                            style={styles.inputText}
-                            placeholder="Enter the model name"
-                            placeholderTextColor="#FFFFFF"
-                            onChangeText={text => setModelName(text)}
-                        />
-                    </View>
-                    <Text style={styles.textStyle}>
-                        Price (in PLN)
-                    </Text>
-                    <View style={styles.inputView}>
-                        <TextInput
-                            style={styles.inputText}
-                            placeholder="Enter the Price"
-                            keyboardType={"numeric"}
-                            placeholderTextColor="#FFFFFF"
-                            onChangeText={text => {
-                                const numericValue: number = +text;
-                                if (numericValue<0){
-                                    alert('Price can\'t be less than 0');
-                                } else  {
-                                    setPrice(numericValue);
-                                }
-                            }}
-                        />
-                    </View>
-                    <TouchableOpacity style={styles.submitBtn} onPress={submitProduct}>
-                        <Text style={styles.submitText}>
-                            Add Product
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
-        </>
-    )
+          <Text style={styles.textStyle}>
+            Manufacturer name
+          </Text>
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.inputText}
+              placeholder="Enter the manufacturer name"
+              placeholderTextColor="#FFFFFF"
+              onChangeText={text => setManufacturerName(text)}
+            />
+          </View>
+          <Text style={styles.textStyle}>
+            Model name
+          </Text>
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.inputText}
+              placeholder="Enter the model name"
+              placeholderTextColor="#FFFFFF"
+              onChangeText={text => setModelName(text)}
+            />
+          </View>
+          <Text style={styles.textStyle}>
+            {priceLabel}
+          </Text>
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.inputText}
+              placeholder="Enter the Price"
+              keyboardType={"numeric"}
+              placeholderTextColor="#FFFFFF"
+              onChangeText={text => {
+                const numericValue: number = +text;
+                if (numericValue < 0) {
+                  alert('Price can\'t be less than 0');
+                } else {
+                  setPrice(numericValue);
+                }
+              }}
+            />
+          </View>
+          <TouchableOpacity style={styles.submitBtn} onPress={submitProduct}>
+            <Text style={styles.submitText}>
+              Add Product
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </>
+  )
 };
