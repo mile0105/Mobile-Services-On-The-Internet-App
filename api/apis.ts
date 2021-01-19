@@ -3,7 +3,7 @@ import {
     getEditOrDeleteProductUrl,
     getChangeQuantityUrl,
     LIST_PRODUCTS_URL,
-    REGISTER_URL, PASSWORD_LOGIN_URL, GOOGLE_LOGIN_URL
+    REGISTER_URL, PASSWORD_LOGIN_URL, GOOGLE_LOGIN_URL, LIST_PRODUCTS_URL_V2
 } from "../constants/APIConstants";
 import {JwtToken, Product, ProductApi, ProductDelta, User} from "./models";
 import {gretch} from "gretchen";
@@ -19,7 +19,7 @@ export const getAllProducts = async (): Promise<Product[]> => {
 
     const authorization = await authorizationHeader();
 
-    const {data, error} = await gretch<Product[]>(LIST_PRODUCTS_URL, {
+    const {data, error} = await gretch<Product[]>(LIST_PRODUCTS_URL_V2, {
         method: 'GET',
         headers: Object.assign({...contentType, ...authorization}),
     }).json();

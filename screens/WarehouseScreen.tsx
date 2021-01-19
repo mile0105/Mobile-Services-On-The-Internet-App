@@ -11,9 +11,15 @@ import {removeAccessToken} from "../storage/store";
 import {sync} from "../network/sync";
 import {isConnected} from "../network/utils";
 
+const ENGLISH = 'ENGLISH';
+const FRENCH = 'FRENCH';
+
+
 export default function WarehouseScreen() {
 
+
     const [products, setProducts] = useState<Product[]>([]);
+    const [language, setLanguage] = useState<typeof ENGLISH | typeof FRENCH>(FRENCH);
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [addProductModalVisible, setAddProductModalVisible] = useState(false);
@@ -31,6 +37,7 @@ export default function WarehouseScreen() {
                 await sync();
                 try {
                     const productsResponse = await getAllProducts();
+                    console.log(productsResponse)
                     setProducts(productsResponse);
                 } catch (err) {
                     console.log(err);
@@ -95,6 +102,7 @@ export default function WarehouseScreen() {
                             {products.map((product, index) =>
                                 <ProductItem key={index}
                                              product={product}
+                                             language={language}
                                              deleteProductFromState={deleteProductFromState}
                                              editProductInState={editProductInState}/>
                             )}
@@ -149,6 +157,31 @@ export default function WarehouseScreen() {
                                 </Text>
                             </TouchableOpacity>
                         </View>
+
+
+                        <View style={styles.container}>
+                            <TouchableOpacity style={styles.submitBtn} onPress={() => {
+                                if(language === 'ENGLISH') {
+                                    setLanguage('FRENCH')
+                                } else {
+                                    setLanguage('ENGLISH')
+                                }
+                            }}>
+                                <Text style={styles.submitText}>
+                                    {language === 'ENGLISH' && (
+                                      <>
+                                          Change to french
+                                      </>
+                                    )}
+                                    {language === 'FRENCH' && (
+                                      <>
+                                          Change to english
+                                      </>
+                                    )}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
 
                     </View>
                 )}

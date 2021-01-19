@@ -8,20 +8,25 @@ import {UpdateQuantityView} from "./UpdateQuantityView";
 
 export interface ProductItemProps {
     product: Product,
+    language: 'ENGLISH' | 'FRENCH',
     deleteProductFromState: any,
     editProductInState: any,
 }
 
 export const ProductItem = (props: ProductItemProps) => {
 
-    const {product, deleteProductFromState, editProductInState} = props;
+    const {product, deleteProductFromState, editProductInState, language} = props;
 
     const [editProductModalVisible, setEditProductModalVisible] = useState(false);
     const [updateQuantityModalVisible, setUpdateQuantityModalVisible] = useState(false);
 
     const productName = `${product.manufacturerName} - ${product.modelName}`;
-    const productNameAndPrice = `${productName} : ${product.price} PLN`;
+
+    const productNameAndPriceUSD = `${productName} : ${product.price.toFixed(2)} USD`;
+    const productNameAndPriceEUR = `${productName} : ${product.priceInEur.toFixed(2)} EUR`;
     const quantity = `${product.quantity} items`;
+
+    const productNameAndPrice = language === 'ENGLISH'? productNameAndPriceUSD : productNameAndPriceEUR;
 
     const deleteCurrentProduct = () => {
         const productId = product.id;

@@ -15,6 +15,7 @@ export interface Product {
     manufacturerName: string,
     modelName: string,
     price: number,
+    priceInEur: number,
     quantity: number,
     lastUpdate: Date | undefined
 }
