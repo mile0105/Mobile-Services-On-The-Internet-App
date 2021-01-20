@@ -9,34 +9,24 @@ import {addProduct} from "../api/apis";
 export interface AddProductViewProps {
   addProductToState: any;
   setModal: any;
-  language: 'ENGLISH' | 'FRENCH'
 }
 
-export const AddProductView = ({addProductToState, setModal, language}: AddProductViewProps) => {
+export const AddProductView = ({addProductToState, setModal}: AddProductViewProps) => {
 
   const [modelName, setModelName] = useState('');
   const [manufacturerName, setManufacturerName] = useState('');
   const [price, setPrice] = useState(0);
-
-
-  const priceLabel = language === 'ENGLISH' ? 'Price in USD' : 'Price in EUR';
+  const [priceInEUR, setPriceInEUR] = useState(0);
 
   const submitProduct = () => {
 
-    let product;
-    if (language === 'ENGLISH') {
-      product = {
-        modelName: modelName,
-        manufacturerName: manufacturerName,
-        price: price
-      } as ProductApi;
-    } else {
-      product = {
-        modelName: modelName,
-        manufacturerName: manufacturerName,
-        priceInEur: price
-      } as ProductApi;
-    }
+    const product = {
+      modelName: modelName,
+      manufacturerName: manufacturerName,
+      price: price,
+      priceInEur: priceInEUR,
+    } as ProductApi;
+
     addProduct(product).then(product => {
       addProductToState(product);
       setModal(false);
@@ -74,7 +64,7 @@ export const AddProductView = ({addProductToState, setModal, language}: AddProdu
             />
           </View>
           <Text style={styles.textStyle}>
-            {priceLabel}
+            Price in USD
           </Text>
           <View style={styles.inputView}>
             <TextInput
@@ -88,6 +78,25 @@ export const AddProductView = ({addProductToState, setModal, language}: AddProdu
                   alert('Price can\'t be less than 0');
                 } else {
                   setPrice(numericValue);
+                }
+              }}
+            />
+          </View>
+          <Text style={styles.textStyle}>
+            Price in EUR
+          </Text>
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.inputText}
+              placeholder="Enter the Price"
+              keyboardType={"numeric"}
+              placeholderTextColor="#FFFFFF"
+              onChangeText={text => {
+                const numericValue: number = +text;
+                if (numericValue < 0) {
+                  alert('Price can\'t be less than 0');
+                } else {
+                  setPriceInEUR(numericValue);
                 }
               }}
             />

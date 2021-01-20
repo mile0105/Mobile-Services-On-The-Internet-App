@@ -115,8 +115,7 @@ export default function WarehouseScreen() {
                                 setAddProductModalVisible(!addProductModalVisible)
                             }}
                         >
-                            <AddProductView language={language}
-                                            addProductToState={addProductToState}
+                            <AddProductView addProductToState={addProductToState}
                                             setModal={setAddProductModalVisible}/>
                         </Modal>
 

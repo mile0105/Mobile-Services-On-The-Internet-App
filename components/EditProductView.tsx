@@ -10,35 +10,24 @@ export interface EditProductViewProps {
   editProductState: any;
   setModal: any;
   oldProduct: Product;
-  language: 'ENGLISH' | 'FRENCH'
 }
 
-export const EditProductView = ({editProductState, setModal, oldProduct, language}: EditProductViewProps) => {
-
-  const initialPrice = language === 'ENGLISH' ? oldProduct.price : oldProduct.priceInEur;
+export const EditProductView = ({editProductState, setModal, oldProduct}: EditProductViewProps) => {
 
   const [modelName, setModelName] = useState(oldProduct.modelName);
   const [manufacturerName, setManufacturerName] = useState(oldProduct.manufacturerName);
-  const [price, setPrice] = useState(initialPrice);
-
-  const priceLabel = language === 'ENGLISH' ? 'Price in USD' : 'Price in EUR';
+  const [price, setPrice] = useState(oldProduct.price);
+  const [priceInEUR, setPriceInEUR] = useState(oldProduct.priceInEur);
 
   const submitProduct = () => {
 
-    let product;
-    if (language === 'ENGLISH') {
-      product = {
-        modelName: modelName,
-        manufacturerName: manufacturerName,
-        price: price
-      } as ProductApi;
-    } else {
-      product = {
-        modelName: modelName,
-        manufacturerName: manufacturerName,
-        priceInEur: price
-      } as ProductApi;
-    }
+    const product = {
+      modelName: modelName,
+      manufacturerName: manufacturerName,
+      price: price,
+      priceInEur: priceInEUR,
+    } as ProductApi;
+
     editProduct(product, oldProduct.id, oldProduct.quantity).then(product => {
       editProductState(product);
       setModal(false);
@@ -78,7 +67,7 @@ export const EditProductView = ({editProductState, setModal, oldProduct, languag
             />
           </View>
           <Text style={styles.textStyle}>
-            {priceLabel}
+            Price in USD
           </Text>
           <View style={styles.inputView}>
             <TextInput
@@ -93,6 +82,26 @@ export const EditProductView = ({editProductState, setModal, oldProduct, languag
                   alert('Price can\'t be less than 0');
                 } else {
                   setPrice(numericValue);
+                }
+              }}
+            />
+          </View>
+          <Text style={styles.textStyle}>
+            Price in EUR
+          </Text>
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.inputText}
+              placeholder="Enter the Price"
+              keyboardType={"numeric"}
+              value={priceInEUR.toString()}
+              placeholderTextColor="#FFFFFF"
+              onChangeText={text => {
+                const numericValue: number = +text;
+                if (numericValue < 0) {
+                  alert('Price can\'t be less than 0');
+                } else {
+                  setPriceInEUR(numericValue);
                 }
               }}
             />
